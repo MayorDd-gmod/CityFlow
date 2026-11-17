@@ -6,9 +6,6 @@
     <title>CityFlow Taxi — Таксопарк Доброграда</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Подключение Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <style>
         :root {
             --primary: #f59e0b;
@@ -1245,7 +1242,7 @@
             <div class="team-grid">
                 <div class="team-card">
                     <div class="team-avatar">В</div>
-                    <h3>Вениамин Пастушков</h3>
+                    <h3>Вениамин Вениамин</h3>
                     <div class="role">Директор компании</div>
                     <div class="discord"><i class="fab fa-discord"></i> atacli</div>
                 </div>
@@ -1478,13 +1475,10 @@
     // ============ КОНФИГ ============
     const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1571910798241177662/kpSOLD2MkU415O4W5pQhL-6IkGt8KmTMMF-jxs0Lf2rQ0JhXMtRp6nNvTSGVCjRniwpn';
     const EMPLOYEE_CODE = 'cityflow2026'; 
-    
-    // Подключение к Supabase
-    const SUPABASE_URL = 'https://cbgpqwxlioheuwfzgdnw.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_aB56SHtBC0GwbvclkEtuTg_T1kjpELZ';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const STORAGE_KEY = 'cityflow_orders_local';
+    const SESSION_KEY = 'cityflow_employee_session_v4';
 
-    const SESSION_KEY = 'cityflow_employee_session_v3';
+    let orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     let selectedMode = '';
 
     // ============ НАВИГАЦИЯ ============
@@ -1545,44 +1539,45 @@
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
 
-        const orderData = {
+        const order = {
+            id: 'CF-' + Date.now().toString(36).toUpperCase(),
             name,
             date,
             mode: selectedMode,
             discord,
             signature,
-            status: 'pending'
+            status: 'pending',
+            createdAt: new Date().toISOString(),
+            total: null
         };
 
-        // 1. Сохраняем в Supabase
+        // Сохраняем локально
+        orders.push(order);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+
+        // Отправляем в Discord
+        const prices = { 'Комфорт': 'от 500 ₽', 'Бизнес': 'от 1500 ₽', 'Личный водитель': 'от 5000 ₽' };
+        const icons = { 'Комфорт': '🚕', 'Бизнес': '💼', 'Личный водитель': '👔' };
+
+        const embed = {
+            title: '🚕 Новый заказ такси CityFlow',
+            description: '**Поступила новая заявка от клиента**',
+            color: 0xf59e0b,
+            fields: [
+                { name: '🆔 ID заказа', value: `\`${order.id}\``, inline: true },
+                { name: '👤 Фамилия и Имя', value: name, inline: true },
+                { name: '📅 Время заказа', value: date.replace('T', ' в '), inline: true },
+                { name: `${icons[selectedMode]} Режим такси`, value: selectedMode, inline: true },
+                { name: '💰 Тариф', value: prices[selectedMode], inline: true },
+                { name: '💬 Discord', value: discord, inline: true },
+                { name: '🔢 Подпись', value: signature, inline: true },
+                { name: '📊 Статус', value: '⏳ Ожидает подтверждения диспетчером', inline: false }
+            ],
+            footer: { text: 'CityFlow Taxi — Доброград · ул. Бравери, 1 · 734-755-5700' },
+            timestamp: new Date().toISOString()
+        };
+
         try {
-            const { data, error } = await supabaseClient
-                .from('orders')
-                .insert([orderData]);
-
-            if (error) throw error;
-            
-            // 2. Отправляем в Discord
-            const prices = { 'Комфорт': 'от 500 ₽', 'Бизнес': 'от 1500 ₽', 'Личный водитель': 'от 5000 ₽' };
-            const icons = { 'Комфорт': '🚕', 'Бизнес': '💼', 'Личный водитель': '👔' };
-
-            const embed = {
-                title: '🚕 Новый заказ такси CityFlow',
-                description: '**Поступила новая заявка от клиента**',
-                color: 0xf59e0b,
-                fields: [
-                    { name: '👤 Фамилия и Имя', value: name, inline: true },
-                    { name: '📅 Время заказа', value: date.replace('T', ' в '), inline: true },
-                    { name: `${icons[selectedMode]} Режим такси`, value: selectedMode, inline: true },
-                    { name: '💰 Тариф', value: prices[selectedMode], inline: true },
-                    { name: '💬 Discord', value: discord, inline: true },
-                    { name: '🔢 Подпись', value: signature, inline: true },
-                    { name: '📊 Статус', value: '⏳ Ожидает подтверждения диспетчером', inline: false }
-                ],
-                footer: { text: 'CityFlow Taxi — Доброград · ул. Бравери, 1 · 734-755-5700' },
-                timestamp: new Date().toISOString()
-            };
-
             await fetch(DISCORD_WEBHOOK, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1593,19 +1588,16 @@
                     embeds: [embed]
                 })
             });
-
-            showToast('Заказ оформлен! Ожидайте подтверждения.', 'success');
-            e.target.reset();
-            document.querySelectorAll('.tariff-card').forEach(c => c.classList.remove('selected'));
-            selectedMode = '';
-            
         } catch (err) {
-            console.error('Ошибка при отправке:', err);
-            showToast('Ошибка базы данных: ' + err.message, 'error');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Оформить заказ';
+            console.error('Webhook error:', err);
         }
+
+        showToast('Заказ оформлен! Ожидайте подтверждения.', 'success');
+        e.target.reset();
+        document.querySelectorAll('.tariff-card').forEach(c => c.classList.remove('selected'));
+        selectedMode = '';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Оформить заказ';
     });
 
     // ============ СОТРУДНИК ============
@@ -1638,143 +1630,119 @@
         document.getElementById('employeeCode').value = '';
     }
 
-    // ============ ЗАГРУЗКА ЗАКАЗОВ ИЗ БАЗЫ ============
-    async function renderOrders() {
+    function renderOrders() {
+        orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
         const list = document.getElementById('orders-list');
-        list.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Загрузка заказов из базы...</p></div>';
 
-        try {
-            const { data: orders, error } = await supabaseClient
-                .from('orders')
-                .select('*')
-                .order('created_at', { ascending: false });
+        if (orders.length === 0) {
+            list.innerHTML = `
+                <div class="card empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>Заказов пока нет</p>
+                </div>
+            `;
+            return;
+        }
 
-            if (error) throw error;
+        const sorted = [...orders].reverse();
 
-            if (!orders || orders.length === 0) {
-                list.innerHTML = `
-                    <div class="card empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>Заказов пока нет</p>
+        list.innerHTML = sorted.map(order => {
+            const statusLabels = {
+                pending: '⏳ Ожидает',
+                accepted: '✅ Принят',
+                rejected: '❌ Отклонён',
+                completed: '🏁 Завершён'
+            };
+
+            const prices = { 'Комфорт': 500, 'Бизнес': 1500, 'Личный водитель': 5000 };
+            const basePrice = prices[order.mode] || 500;
+
+            let actions = '';
+            if (order.status === 'pending') {
+                actions = `
+                    <button class="btn btn-success" onclick="acceptOrder('${order.id}')">
+                        <i class="fas fa-check"></i> Принять
+                    </button>
+                    <button class="btn btn-danger" onclick="rejectOrder('${order.id}')">
+                        <i class="fas fa-times"></i> Отклонить
+                    </button>
+                `;
+            } else if (order.status === 'accepted') {
+                actions = `
+                    <div class="price-input-group">
+                        <input type="number" id="price-${order.id}" placeholder="Итоговая сумма ₽" value="${order.total || basePrice}" min="0">
+                        <button class="btn btn-success" onclick="completeOrder('${order.id}')">
+                            <i class="fas fa-flag-checkered"></i> Завершить
+                        </button>
                     </div>
                 `;
-                return;
             }
 
-            list.innerHTML = orders.map(order => {
-                const statusLabels = {
-                    pending: '⏳ Ожидает',
-                    accepted: '✅ Принят',
-                    rejected: '❌ Отклонён',
-                    completed: '🏁 Завершён'
-                };
-
-                const prices = { 'Комфорт': 500, 'Бизнес': 1500, 'Личный водитель': 5000 };
-                const basePrice = prices[order.mode] || 500;
-
-                let actions = '';
-                if (order.status === 'pending') {
-                    actions = `
-                        <button class="btn btn-success" onclick="acceptOrder(${order.id})">
-                            <i class="fas fa-check"></i> Принять
-                        </button>
-                        <button class="btn btn-danger" onclick="rejectOrder(${order.id})">
-                            <i class="fas fa-times"></i> Отклонить
-                        </button>
-                    `;
-                } else if (order.status === 'accepted') {
-                    actions = `
-                        <div class="price-input-group">
-                            <input type="number" id="price-${order.id}" placeholder="Итоговая сумма ₽" value="${order.total || basePrice}" min="0">
-                            <button class="btn btn-success" onclick="completeOrder(${order.id})">
-                                <i class="fas fa-flag-checkered"></i> Завершить
-                            </button>
+            return `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-id">${order.id}</div>
+                            <div class="order-name">${order.name}</div>
                         </div>
-                    `;
-                }
-
-                return `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <div>
-                                <div class="order-id">ID: ${order.id}</div>
-                                <div class="order-name">${order.name}</div>
-                            </div>
-                            <span class="order-status ${order.status}">${statusLabels[order.status]}</span>
+                        <span class="order-status ${order.status}">${statusLabels[order.status]}</span>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Дата и время</span>
+                            <span class="detail-value">${order.date.replace('T', ' в ')}</span>
                         </div>
-                        <div class="order-details">
-                            <div class="detail-item">
-                                <span class="detail-label">Дата и время</span>
-                                <span class="detail-value">${order.date.replace('T', ' в ')}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Режим такси</span>
-                                <span class="detail-value">${order.mode}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Discord</span>
-                                <span class="detail-value">${order.discord}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Подпись</span>
-                                <span class="detail-value">${order.signature}</span>
-                            </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Режим такси</span>
+                            <span class="detail-value">${order.mode}</span>
                         </div>
-                        ${order.total ? `
-                            <div class="total-price">
-                                <span>Итоговая сумма:</span>
-                                <span>${order.total} ₽</span>
-                            </div>
-                        ` : ''}
-                        <div class="order-actions">
-                            ${actions || '<span style="color: var(--text-muted); font-size: 14px;"><i class="fas fa-check-double"></i> Заказ завершён</span>'}
+                        <div class="detail-item">
+                            <span class="detail-label">Discord</span>
+                            <span class="detail-value">${order.discord}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Подпись</span>
+                            <span class="detail-value">${order.signature}</span>
                         </div>
                     </div>
-                `;
-            }).join('');
-
-        } catch (err) {
-            console.error('Ошибка загрузки:', err);
-            list.innerHTML = `<div class="card empty-state"><p style="color: var(--danger);">Ошибка загрузки данных. Проверьте консоль.</p></div>`;
-        }
+                    ${order.total ? `
+                        <div class="total-price">
+                            <span>Итоговая сумма:</span>
+                            <span>${order.total} ₽</span>
+                        </div>
+                    ` : ''}
+                    <div class="order-actions">
+                        ${actions || '<span style="color: var(--text-muted); font-size: 14px;"><i class="fas fa-check-double"></i> Заказ завершён</span>'}
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
-    // ============ ДЕЙСТВИЯ С ЗАКАЗАМИ (ОБНОВЛЕНИЕ В БАЗЕ) ============
     async function acceptOrder(id) {
-        try {
-            const { error } = await supabaseClient
-                .from('orders')
-                .update({ status: 'accepted' })
-                .eq('id', id);
-                
-            if (error) throw error;
-            
-            await sendStatusUpdate(id, '✅ Заказ принят диспетчером', 0x22c55e);
-            showToast('Заказ принят!', 'success');
-            renderOrders();
-        } catch (err) {
-            showToast('Ошибка обновления статуса', 'error');
-        }
+        const order = orders.find(o => o.id === id);
+        if (!order) return;
+        order.status = 'accepted';
+        saveOrders();
+        await sendStatusUpdate(order, '✅ Заказ принят диспетчером', 0x22c55e);
+        showToast('Заказ принят!', 'success');
+        renderOrders();
     }
 
     async function rejectOrder(id) {
-        try {
-            const { error } = await supabaseClient
-                .from('orders')
-                .update({ status: 'rejected' })
-                .eq('id', id);
-                
-            if (error) throw error;
-            
-            await sendStatusUpdate(id, '❌ Заказ отклонён диспетчером', 0xef4444);
-            showToast('Заказ отклонён', 'error');
-            renderOrders();
-        } catch (err) {
-            showToast('Ошибка обновления статуса', 'error');
-        }
+        const order = orders.find(o => o.id === id);
+        if (!order) return;
+        order.status = 'rejected';
+        saveOrders();
+        await sendStatusUpdate(order, '❌ Заказ отклонён диспетчером', 0xef4444);
+        showToast('Заказ отклонён', 'error');
+        renderOrders();
     }
 
     async function completeOrder(id) {
+        const order = orders.find(o => o.id === id);
+        if (!order) return;
+
         const priceInput = document.getElementById('price-' + id);
         const total = parseInt(priceInput.value);
 
@@ -1783,28 +1751,21 @@
             return;
         }
 
-        try {
-            const { error } = await supabaseClient
-                .from('orders')
-                .update({ status: 'completed', total: total })
-                .eq('id', id);
-                
-            if (error) throw error;
-            
-            await sendStatusUpdate(id, '🏁 Заказ завершён', 0x3b82f6, total);
-            showToast(`Заказ завершён на сумму ${total} ₽`, 'success');
-            renderOrders();
-        } catch (err) {
-            showToast('Ошибка обновления статуса', 'error');
-        }
+        order.status = 'completed';
+        order.total = total;
+        order.completedAt = new Date().toISOString();
+        saveOrders();
+
+        await sendStatusUpdate(order, '🏁 Заказ завершён', 0x3b82f6);
+        showToast(`Заказ завершён на сумму ${total} ₽`, 'success');
+        renderOrders();
     }
 
-    // ============ УВЕДОМЛЕНИЯ В DISCORD ============
-    async function sendStatusUpdate(orderId, title, color, total = null) {
-        // Получаем инфу о заказе для дискорда
-        const { data: order } = await supabaseClient.from('orders').select('*').eq('id', orderId).single();
-        if(!order) return;
+    function saveOrders() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+    }
 
+    async function sendStatusUpdate(order, title, color) {
         const embed = {
             title: title,
             color: color,
@@ -1818,8 +1779,8 @@
             timestamp: new Date().toISOString()
         };
 
-        if (total) {
-            embed.fields.push({ name: '💰 Итоговая сумма', value: `${total} ₽`, inline: false });
+        if (order.total) {
+            embed.fields.push({ name: '💰 Итоговая сумма', value: `${order.total} ₽`, inline: false });
         }
 
         try {
@@ -1832,7 +1793,7 @@
                 })
             });
         } catch (err) {
-            console.error('Discord Webhook error:', err);
+            console.error('Webhook error:', err);
         }
     }
 
