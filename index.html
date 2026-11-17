@@ -36,9 +36,32 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            background-image: radial-gradient(ellipse at 15% 0%, rgba(245, 158, 11, 0.12) 0%, transparent 55%),
-                              radial-gradient(ellipse at 85% 100%, rgba(245, 158, 11, 0.06) 0%, transparent 50%);
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===== ФОН ИЗ КАРТИНКИ ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/MayorDd-gmod/CityFlow/main/%D0%9E%D0%91%D0%9E%D0%98.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.15; /* Делаем картинку полупрозрачной, чтобы не мешала читать */
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Дополнительное затемнение для читаемости */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 15% 0%, rgba(10, 14, 23, 0.7) 0%, rgba(10, 14, 23, 0.95) 70%);
+            z-index: -1;
+            pointer-events: none;
         }
 
         ::-webkit-scrollbar { width: 10px; }
@@ -68,6 +91,8 @@
             font-weight: 900;
             letter-spacing: -1px;
             cursor: pointer;
+            text-decoration: none;
+            color: var(--text);
         }
 
         .logo-icon {
@@ -84,6 +109,12 @@
         }
 
         .logo span { color: var(--primary); }
+        
+        /* Убираем пробел между City и Flow */
+        .logo-text {
+            display: flex;
+            gap: 0;
+        }
 
         .header-nav {
             display: flex;
@@ -1006,7 +1037,8 @@
             border-top: 1px solid var(--border);
             padding: 40px 48px;
             margin-top: 40px;
-            background: var(--bg-light);
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(10px);
         }
 
         .footer-content {
@@ -1065,7 +1097,7 @@
 <header>
     <div class="logo" onclick="switchTab('order')">
         <div class="logo-icon"><i class="fas fa-taxi"></i></div>
-        City<span>Flow</span>
+        <div class="logo-text">City<span>Flow</span></div>
     </div>
     <div class="header-nav">
         <button class="nav-tab active" onclick="switchTab('order')">
@@ -1273,7 +1305,7 @@
                     <div class="contact-icon"><i class="fas fa-globe"></i></div>
                     <div>
                         <h3>Сайт</h3>
-                        <p>www.cityflowtaxi.com</p>
+                        <a href="https://mayordd-gmod.github.io/CityFlow/" style="color: var(--text); text-decoration: none;">www.cityflowtaxi.com</a>
                     </div>
                 </div>
                 <div class="contact-card">
@@ -1429,9 +1461,6 @@
                 <button class="btn btn-primary" onclick="employeeLogin()">
                     <i class="fas fa-sign-in-alt"></i> Войти
                 </button>
-                <p style="margin-top: 20px; font-size: 12px; color: var(--text-muted);">
-                    Код по умолчанию: <strong style="color: var(--primary);">cityflow2026</strong>
-                </p>
             </div>
         </div>
 
@@ -1460,7 +1489,7 @@
         </div>
         <div class="footer-info">
             США, Мичиган, Доброград, ул. Бравери, 1<br>
-            Телефон: <a href="tel:7347555700">734-755-5700</a> · Сайт: www.cityflowtaxi.com<br>
+            Телефон: <a href="tel:7347555700">734-755-5700</a> · Сайт: <a href="https://mayordd-gmod.github.io/CityFlow/">www.cityflowtaxi.com</a><br>
             © 2024–2026 CityFlow Taxi. Все права защищены.
         </div>
     </div>
