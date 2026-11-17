@@ -49,12 +49,11 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            opacity: 0.15; /* Делаем картинку полупрозрачной, чтобы не мешала читать */
+            opacity: 0.15;
             z-index: -1;
             pointer-events: none;
         }
 
-        /* Дополнительное затемнение для читаемости */
         body::after {
             content: '';
             position: fixed;
@@ -109,12 +108,6 @@
         }
 
         .logo span { color: var(--primary); }
-        
-        /* Убираем пробел между City и Flow */
-        .logo-text {
-            display: flex;
-            gap: 0;
-        }
 
         .header-nav {
             display: flex;
@@ -319,7 +312,7 @@
 
         label i { color: var(--primary); font-size: 13px; }
 
-        input, select {
+        input, select, textarea {
             background: var(--bg);
             border: 1.5px solid var(--border);
             border-radius: 14px;
@@ -330,15 +323,21 @@
             outline: none;
             width: 100%;
             font-weight: 500;
+            font-family: 'Inter', sans-serif;
         }
 
-        input:focus, select:focus {
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input:focus, select:focus, textarea:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.12);
             background: var(--bg-light);
         }
 
-        input::placeholder { color: #4a5a70; }
+        input::placeholder, textarea::placeholder { color: #4a5a70; }
         select option { background: var(--card); color: var(--text); }
 
         /* ===== TARIFFS ===== */
@@ -810,6 +809,85 @@
             margin-top: 3px;
         }
 
+        /* ===== REVIEWS ===== */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 24px;
+        }
+
+        .review-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .review-author {
+            font-weight: 800;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-author-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--bg);
+            font-weight: 900;
+        }
+
+        .review-stars {
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .review-text {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .review-date {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            opacity: 0.7;
+        }
+
+        .star-rating-input {
+            display: flex;
+            gap: 8px;
+            font-size: 24px;
+            color: var(--text-muted);
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .star-rating-input i.active {
+            color: var(--primary);
+        }
+
+        .star-rating-input i:hover {
+            color: var(--primary-light);
+        }
+
         /* ===== EMPLOYEE ===== */
         .login-box {
             max-width: 420px;
@@ -1072,6 +1150,7 @@
             .form-grid { grid-template-columns: 1fr; }
             .tariffs-grid { grid-template-columns: 1fr; }
             .jobs-columns { grid-template-columns: 1fr; }
+            .reviews-grid { grid-template-columns: 1fr; }
             .card, .story-card, .jobs-card { padding: 24px 20px; }
             main { padding: 0 14px 40px; }
             .nav-tab { padding: 9px 14px; font-size: 12px; }
@@ -1097,7 +1176,8 @@
 <header>
     <div class="logo" onclick="switchTab('order')">
         <div class="logo-icon"><i class="fas fa-taxi"></i></div>
-        <div class="logo-text">City<span>Flow</span></div>
+        <!-- ИСПРАВЛЕНО: Убран flex и пробелы -->
+        <div style="display:inline-block;"><span>City</span><span style="color: var(--primary);">Flow</span></div>
     </div>
     <div class="header-nav">
         <button class="nav-tab active" onclick="switchTab('order')">
@@ -1111,6 +1191,9 @@
         </button>
         <button class="nav-tab" onclick="switchTab('jobs')">
             <i class="fas fa-briefcase"></i> Вакансии
+        </button>
+        <button class="nav-tab" onclick="switchTab('reviews')">
+            <i class="fas fa-star"></i> Отзывы
         </button>
         <button class="nav-tab" onclick="switchTab('employee')">
             <i class="fas fa-user-shield"></i> Сотрудник
@@ -1450,6 +1533,54 @@
         </div>
     </section>
 
+    <!-- ============ ОТЗЫВЫ ============ -->
+    <section id="reviews-section" class="section">
+        <div class="about-hero">
+            <h1>Отзывы <span>пассажиров</span></h1>
+            <p>Мнения наших клиентов — главный показатель качества работы CityFlow.</p>
+        </div>
+
+        <div class="reviews-grid">
+            <!-- Форма добавления отзыва -->
+            <div class="card" style="align-self: start;">
+                <h2 class="card-title"><i class="fas fa-pen"></i> Оставить отзыв</h2>
+                <p class="card-subtitle">Поделитесь впечатлениями о поездке</p>
+                
+                <form id="review-form">
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label><i class="fas fa-user"></i> Имя и Фамилия</label>
+                        <input type="text" id="reviewName" placeholder="Иван Иванов" required>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label><i class="fas fa-star"></i> Оценка</label>
+                        <div class="star-rating-input" id="star-rating">
+                            <i class="fas fa-star" data-value="1"></i>
+                            <i class="fas fa-star" data-value="2"></i>
+                            <i class="fas fa-star" data-value="3"></i>
+                            <i class="fas fa-star" data-value="4"></i>
+                            <i class="fas fa-star" data-value="5"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label><i class="fas fa-comment"></i> Комментарий</label>
+                        <textarea id="reviewText" placeholder="Расскажите, как прошла поездка..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Отправить отзыв
+                    </button>
+                </form>
+            </div>
+
+            <!-- Список отзывов -->
+            <div id="reviews-list">
+                <!-- Сюда будут загружаться отзывы -->
+            </div>
+        </div>
+    </section>
+
     <!-- ============ СОТРУДНИК ============ -->
     <section id="employee-section" class="section">
         <div id="employee-login" class="login-box">
@@ -1504,11 +1635,14 @@
     // ============ КОНФИГ ============
     const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1571910798241177662/kpSOLD2MkU415O4W5pQhL-6IkGt8KmTMMF-jxs0Lf2rQ0JhXMtRp6nNvTSGVCjRniwpn';
     const EMPLOYEE_CODE = 'cityflow2026'; 
-    const STORAGE_KEY = 'cityflow_orders_local';
+    const ORDERS_STORAGE_KEY = 'cityflow_orders_local';
+    const REVIEWS_STORAGE_KEY = 'cityflow_reviews_local';
     const SESSION_KEY = 'cityflow_employee_session_v4';
 
-    let orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    let orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
+    let reviews = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]');
     let selectedMode = '';
+    let selectedRating = 0;
 
     // ============ НАВИГАЦИЯ ============
     function switchTab(tab) {
@@ -1519,7 +1653,7 @@
         if (btn) btn.classList.add('active');
         else {
             const tabs = document.querySelectorAll('.nav-tab');
-            const idx = { order: 0, about: 1, fleet: 2, jobs: 3, employee: 4 };
+            const idx = { order: 0, about: 1, fleet: 2, jobs: 3, reviews: 4, employee: 5 };
             if (tabs[idx[tab]]) tabs[idx[tab]].classList.add('active');
         }
 
@@ -1527,6 +1661,7 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         if (tab === 'employee') checkEmployeeSession();
+        if (tab === 'reviews') renderReviews();
     }
 
     // ============ ТОСТ ============
@@ -1549,6 +1684,21 @@
         el.classList.add('selected');
         selectedMode = el.dataset.mode;
     }
+
+    // ============ ЗВЕЗДЫ ДЛЯ ОТЗЫВОВ ============
+    const stars = document.querySelectorAll('#star-rating i');
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            selectedRating = parseInt(star.dataset.value);
+            stars.forEach(s => {
+                if (parseInt(s.dataset.value) <= selectedRating) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+        });
+    });
 
     // ============ ЗАКАЗ ============
     document.getElementById('order-form').addEventListener('submit', async (e) => {
@@ -1582,7 +1732,7 @@
 
         // Сохраняем локально
         orders.push(order);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
 
         // Отправляем в Discord
         const prices = { 'Комфорт': 'от 500 ₽', 'Бизнес': 'от 1500 ₽', 'Личный водитель': 'от 5000 ₽' };
@@ -1629,6 +1779,108 @@
         btn.innerHTML = '<i class="fas fa-paper-plane"></i> Оформить заказ';
     });
 
+    // ============ ОТЗЫВЫ ============
+    document.getElementById('review-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        const name = document.getElementById('reviewName').value.trim();
+        const text = document.getElementById('reviewText').value.trim();
+
+        if (!name || !text || selectedRating === 0) {
+            showToast('Заполните все поля и поставьте оценку!', 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+
+        const review = {
+            id: 'RV-' + Date.now().toString(36).toUpperCase(),
+            name,
+            rating: selectedRating,
+            text,
+            createdAt: new Date().toISOString()
+        };
+
+        // Сохраняем локально
+        reviews.unshift(review); // Новые сверху
+        localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(reviews));
+
+        // Отправляем в Discord
+        const embed = {
+            title: '⭐ Новый отзыв CityFlow',
+            description: `**Оценка:** ${'⭐'.repeat(selectedRating)} (${selectedRating}/5)`,
+            color: 0xf59e0b,
+            fields: [
+                { name: '👤 Автор', value: name, inline: true },
+                { name: '💬 Комментарий', value: text, inline: false }
+            ],
+            footer: { text: 'CityFlow Taxi — Отзывы' },
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            await fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: 'CityFlow Taxi — Отзывы',
+                    embeds: [embed]
+                })
+            });
+        } catch (err) {
+            console.error('Webhook error:', err);
+        }
+
+        showToast('Спасибо за ваш отзыв!', 'success');
+        e.target.reset();
+        selectedRating = 0;
+        stars.forEach(s => s.classList.remove('active'));
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Отправить отзыв';
+        
+        renderReviews();
+    });
+
+    function renderReviews() {
+        reviews = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]');
+        const list = document.getElementById('reviews-list');
+
+        if (reviews.length === 0) {
+            list.innerHTML = `
+                <div class="card empty-state">
+                    <i class="fas fa-comments"></i>
+                    <p>Отзывов пока нет. Будьте первым!</p>
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML = reviews.map(review => {
+            const starsHtml = Array(5).fill(0).map((_, i) => 
+                `<i class="fas fa-star" style="color: ${i < review.rating ? 'var(--primary)' : 'var(--border)'}"></i>`
+            ).join('');
+
+            const dateObj = new Date(review.createdAt);
+            const dateStr = dateObj.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            return `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-author">
+                            <div class="review-author-avatar">${review.name.charAt(0).toUpperCase()}</div>
+                            ${review.name}
+                        </div>
+                        <div class="review-stars">${starsHtml}</div>
+                    </div>
+                    <div class="review-text">${review.text}</div>
+                    <div class="review-date">${dateStr}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
     // ============ СОТРУДНИК ============
     function checkEmployeeSession() {
         const session = localStorage.getItem(SESSION_KEY);
@@ -1660,7 +1912,7 @@
     }
 
     function renderOrders() {
-        orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
         const list = document.getElementById('orders-list');
 
         if (orders.length === 0) {
@@ -1791,7 +2043,7 @@
     }
 
     function saveOrders() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
     }
 
     async function sendStatusUpdate(order, title, color) {
@@ -1832,6 +2084,7 @@
     document.getElementById('orderDate').value = now.toISOString().slice(0, 16);
 
     checkEmployeeSession();
+    renderReviews();
 </script>
 
 </body>
