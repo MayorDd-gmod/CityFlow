@@ -33,16 +33,46 @@
         a { color: #0055aa; text-decoration: none; }
         a:hover { text-decoration: underline; }
 
-        /* ===== ШАПКА (БЕЗ ЛОГОТИПА) ===== */
+        /* ===== ШАПКА ===== */
         header {
             background: linear-gradient(to bottom, #ffffff 0%, #dcdcdc 100%);
             border-bottom: 2px solid #a0a0a0;
             padding: 10px 20px;
             display: flex;
-            justify-content: center; /* Центрируем меню, так как логотипа нет */
+            justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            background: linear-gradient(to bottom, #ffcc00, #e6b800);
+            border: 1px solid #b38f00;
+            border-radius: 4px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #000;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        .logo-text {
+            color: #1a3b5c; /* Тёмно-синий */
+            text-shadow: 1px 1px 0 #fff;
+        }
+        .logo-text .orange {
+            color: #d97706; /* Оранжевый */
         }
 
         /* Навигация (вкладки) */
@@ -86,8 +116,6 @@
             padding: 5px 12px;
             border: 1px solid #ccc;
             border-radius: 3px;
-            position: absolute;
-            right: 20px; /* Прижимаем телефон к правому краю */
         }
 
         /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
@@ -315,8 +343,7 @@
 
         /* ===== АДАПТИВ ===== */
         @media (max-width: 768px) {
-            header { flex-direction: column; gap: 10px; padding-top: 40px; }
-            .header-phone { position: static; margin-top: 10px; }
+            header { flex-direction: column; gap: 10px; }
             .nav-tabs { flex-wrap: wrap; justify-content: center; }
             .tariffs-grid { grid-template-columns: 1fr; }
             .features-grid { grid-template-columns: 1fr; }
@@ -329,8 +356,12 @@
 <body>
 
 <div class="wrapper">
-    <!-- ШАПКА (БЕЗ ЛОГОТИПА) -->
+    <!-- ШАПКА -->
     <header>
+        <div class="logo" onclick="switchTab('home')">
+            <div class="logo-icon">🚕</div>
+            <div class="logo-text"><span>City</span><span class="orange">Flow</span></div>
+        </div>
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="switchTab('home')">Главная</button>
             <button class="nav-tab" onclick="switchTab('order')">Заказать</button>
@@ -669,4 +700,258 @@
         };
 
         orders.push(order);
-        localStorage.setItem(ORDERS
+        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+
+        const prices = { 'Комфорт': 'от 500 ₽', 'Бизнес': 'от 1500 ₽', 'Личный водитель': 'от 5000 ₽' };
+        const embed = {
+            title: '🚕 Новый заказ такси CityFlow',
+            color: 0xFFD600,
+            fields: [
+                { name: '🆔 ID', value: `\`${order.id}\``, inline: true },
+                { name: '👤 Имя', value: name, inline: true },
+                { name: '📅 Время', value: date.replace('T', ' в '), inline: true },
+                { name: '🚗 Режим', value: selectedMode, inline: true },
+                { name: '💰 Тариф', value: prices[selectedMode], inline: true },
+                { name: '💬 Discord', value: discord, inline: true },
+                { name: '🔢 Подпись', value: signature, inline: true }
+            ],
+            footer: { text: 'CityFlow Taxi — 2007 Edition' },
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            await fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: 'CityFlow Taxi', embeds: [embed] })
+            });
+        } catch (err) { console.error(err); }
+
+        showAlert('Заказ оформлен! Ожидайте подтверждения.');
+        e.target.reset();
+        document.querySelectorAll('.tariff-card').forEach(c => c.classList.remove('selected'));
+        selectedMode = '';
+        btn.disabled = false;
+        btn.value = 'Оформить заказ';
+    });
+
+    // ============ ОТЗЫВЫ ============
+    document.getElementById('review-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('reviewName').value.trim();
+        const text = document.getElementById('reviewText').value.trim();
+
+        if (!name || !text || selectedRating === 0) {
+            showAlert('Заполните все поля и поставьте оценку!', true);
+            return;
+        }
+
+        const review = {
+            id: 'RV-' + Date.now().toString(36).toUpperCase(),
+            name, rating: selectedRating, text,
+            createdAt: new Date().toISOString()
+        };
+
+        reviews.unshift(review);
+        localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(reviews));
+
+        const embed = {
+            title: '⭐ Новый отзыв',
+            color: 0xFFD600,
+            fields: [
+                { name: '👤 Автор', value: name, inline: true },
+                { name: '⭐ Оценка', value: `${selectedRating}/5`, inline: true },
+                { name: '💬 Комментарий', value: text, inline: false }
+            ],
+            footer: { text: 'CityFlow Taxi' }
+        };
+
+        try {
+            await fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: 'CityFlow Taxi', embeds: [embed] })
+            });
+        } catch (err) { console.error(err); }
+
+        showAlert('Спасибо за отзыв!');
+        e.target.reset();
+        selectedRating = 0;
+        stars.forEach(s => s.classList.remove('active'));
+        renderReviews();
+    });
+
+    function renderReviews() {
+        reviews = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]');
+        const list = document.getElementById('reviews-list');
+
+        if (reviews.length === 0) {
+            list.innerHTML = `<div class="card" style="text-align:center; color:#888;">Отзывов пока нет. Будьте первым!</div>`;
+            return;
+        }
+
+        list.innerHTML = reviews.map(review => {
+            const starsHtml = Array(5).fill(0).map((_, i) => 
+                `<span style="color: ${i < review.rating ? '#f59e0b' : '#ccc'}">★</span>`
+            ).join('');
+
+            return `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-author">${review.name}</div>
+                        <div class="review-stars">${starsHtml}</div>
+                    </div>
+                    <div class="review-text">${review.text}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ============ СОТРУДНИК ============
+    function checkEmployeeSession() {
+        const session = localStorage.getItem(SESSION_KEY);
+        if (session === 'true') {
+            document.getElementById('employee-login').style.display = 'none';
+            document.getElementById('employee-panel').style.display = 'block';
+            renderOrders();
+        } else {
+            document.getElementById('employee-login').style.display = 'block';
+            document.getElementById('employee-panel').style.display = 'none';
+        }
+    }
+
+    function employeeLogin() {
+        const code = document.getElementById('employeeCode').value;
+        if (code === EMPLOYEE_CODE) {
+            localStorage.setItem(SESSION_KEY, 'true');
+            checkEmployeeSession();
+        } else {
+            showAlert('Неверный код доступа!', true);
+        }
+    }
+
+    function employeeLogout() {
+        localStorage.removeItem(SESSION_KEY);
+        checkEmployeeSession();
+        document.getElementById('employeeCode').value = '';
+    }
+
+    function renderOrders() {
+        orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
+        const list = document.getElementById('orders-list');
+
+        if (orders.length === 0) {
+            list.innerHTML = `<div class="card" style="text-align:center; color:#888;">Заказов пока нет</div>`;
+            return;
+        }
+
+        const sorted = [...orders].reverse();
+
+        list.innerHTML = sorted.map(order => {
+            const statusLabels = { pending: 'Ожидает', accepted: 'Принят', rejected: 'Отклонён', completed: 'Завершён' };
+            const statusClass = `status-${order.status}`;
+            const prices = { 'Комфорт': 500, 'Бизнес': 1500, 'Личный водитель': 5000 };
+            const basePrice = prices[order.mode] || 500;
+
+            let actions = '';
+            if (order.status === 'pending') {
+                actions = `
+                    <button class="btn btn-success" onclick="acceptOrder('${order.id}')">Принять</button>
+                    <button class="btn btn-danger" onclick="rejectOrder('${order.id}')">Отклонить</button>
+                `;
+            } else if (order.status === 'accepted') {
+                actions = `
+                    <input type="number" id="price-${order.id}" value="${order.total || basePrice}" style="width:100px; padding:4px; border:1px solid #ccc;">
+                    <button class="btn btn-success" onclick="completeOrder('${order.id}')">Завершить</button>
+                `;
+            }
+
+            return `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-id">${order.id}</div>
+                            <div class="order-name">${order.name}</div>
+                        </div>
+                        <div class="order-status ${statusClass}">${statusLabels[order.status]}</div>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-item"><strong>Время:</strong> ${order.date.replace('T', ' в ')}</div>
+                        <div class="detail-item"><strong>Режим:</strong> ${order.mode}</div>
+                        <div class="detail-item"><strong>Discord:</strong> ${order.discord}</div>
+                        <div class="detail-item"><strong>Подпись:</strong> ${order.signature}</div>
+                    </div>
+                    ${order.total ? `<div style="background:#e8f0fe; padding:5px; border:1px solid #b0c4de; margin-bottom:10px; font-weight:bold;">Сумма: ${order.total} ₽</div>` : ''}
+                    <div class="order-actions">
+                        ${actions || 'Заказ завершён'}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function acceptOrder(id) {
+        const order = orders.find(o => o.id === id);
+        if (!order) return;
+        order.status = 'accepted';
+        saveOrders();
+        await sendDiscordUpdate(order, 'Заказ принят', 0x00C853);
+        renderOrders();
+    }
+
+    async function rejectOrder(id) {
+        const order = orders.find(o => o.id === id);
+        if (!order) return;
+        order.status = 'rejected';
+        saveOrders();
+        await sendDiscordUpdate(order, 'Заказ отклонён', 0xFF1744);
+        renderOrders();
+    }
+
+    async function completeOrder(id) {
+        const order = orders.find(o => o.id === id);
+        if (!order) return;
+        const total = parseInt(document.getElementById('price-' + id).value);
+        if (!total || total <= 0) { showAlert('Введите сумму', true); return; }
+        
+        order.status = 'completed';
+        order.total = total;
+        saveOrders();
+        await sendDiscordUpdate(order, 'Заказ завершён', 0x2979FF);
+        renderOrders();
+    }
+
+    function saveOrders() { localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders)); }
+
+    async function sendDiscordUpdate(order, title, color) {
+        const embed = {
+            title: title,
+            color: color,
+            fields: [
+                { name: '🆔 ID', value: `\`${order.id}\``, inline: true },
+                { name: '👤 Клиент', value: order.name, inline: true }
+            ],
+            timestamp: new Date().toISOString()
+        };
+        if (order.total) embed.fields.push({ name: '💰 Сумма', value: `${order.total} ₽` });
+
+        try {
+            await fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: 'CityFlow Диспетчер', embeds: [embed] })
+            });
+        } catch (err) {}
+    }
+
+    // ============ ИНИЦИАЛИЗАЦИЯ ============
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('orderDate').value = now.toISOString().slice(0, 16);
+
+    checkEmployeeSession();
+    renderReviews();
+</script>
+
+</body>
+</html>
