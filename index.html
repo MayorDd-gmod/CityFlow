@@ -4,1640 +4,595 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CityFlow Taxi — Таксопарк Доброграда</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #f59e0b;
-            --primary-dark: #d97706;
-            --primary-light: #fbbf24;
-            --bg: #0a0e17;
-            --bg-light: #111827;
-            --card: #1a2332;
-            --card-hover: #1f2a3d;
-            --border: #2a3548;
-            --text: #f1f5f9;
-            --text-muted: #8b9cb3;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --info: #3b82f6;
-        }
-
+        /* ===== БАЗОВЫЕ СТИЛИ (Стиль 2007 года) ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
         }
-
-        html { scroll-behavior: smooth; }
 
         body {
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* ===== ФОН ИЗ КАРТИНКИ ===== */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            font-family: Tahoma, Verdana, Arial, sans-serif;
+            font-size: 12px;
+            background-color: #e9e9e9;
             background-image: url('https://raw.githubusercontent.com/MayorDd-gmod/CityFlow/main/%D0%9E%D0%91%D0%9E%D0%98.jpg');
+            background-attachment: fixed;
             background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0.15;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(ellipse at 15% 0%, rgba(10, 14, 23, 0.7) 0%, rgba(10, 14, 23, 0.95) 70%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-
-        /* ===== HEADER ===== */
-        header {
-            padding: 16px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(16px);
-            position: sticky;
-            top: 0;
-            background: rgba(10, 14, 23, 0.85);
-            z-index: 100;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-size: 26px;
-            font-weight: 900;
-            letter-spacing: -1px;
-            cursor: pointer;
-            text-decoration: none;
-            color: var(--text);
-        }
-
-        .logo-icon {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            color: var(--bg);
-            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
-        }
-
-        .logo span { color: var(--primary); }
-
-        .header-nav {
-            display: flex;
-            gap: 8px;
-            background: var(--card);
-            padding: 5px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-        }
-
-        .nav-tab {
-            padding: 11px 22px;
-            border-radius: 10px;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-        }
-
-        .nav-tab.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: var(--bg);
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-        }
-
-        .nav-tab:hover:not(.active) { color: var(--text); background: var(--card-hover); }
-
-        .header-phone {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--primary);
-        }
-
-        /* ===== MAIN ===== */
-        main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px 60px;
-        }
-
-        .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.4s ease; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== HERO ===== */
-        .hero {
-            text-align: center;
-            padding: 70px 0 50px;
-            position: relative;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: var(--primary);
-            padding: 8px 18px;
-            border-radius: 100px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 24px;
-        }
-
-        .hero-badge .dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.3); }
-        }
-
-        .hero h1 {
-            font-size: 56px;
-            font-weight: 900;
-            letter-spacing: -2px;
-            margin-bottom: 18px;
-            line-height: 1.1;
-        }
-
-        .hero h1 span {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero p {
-            color: var(--text-muted);
-            font-size: 18px;
-            max-width: 640px;
-            margin: 0 auto 32px;
-            line-height: 1.6;
-        }
-
-        .hero-stats {
-            display: flex;
-            justify-content: center;
-            gap: 48px;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
-
-        .hero-stat { text-align: center; }
-
-        .hero-stat .num {
-            font-size: 36px;
-            font-weight: 900;
-            color: var(--primary);
-            letter-spacing: -1px;
-        }
-
-        .hero-stat .label {
-            font-size: 13px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-
-        /* ===== CARD ===== */
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 36px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-            opacity: 0.5;
-        }
-
-        .card-title {
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .card-title i { color: var(--primary); }
-
-        .card-subtitle {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 28px;
-        }
-
-        /* ===== FORM ===== */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 22px;
-        }
-
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group.full { grid-column: 1 / -1; }
-
-        label {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        label i { color: var(--primary); font-size: 13px; }
-
-        input, select, textarea {
-            background: var(--bg);
-            border: 1.5px solid var(--border);
-            border-radius: 14px;
-            padding: 15px 18px;
-            color: var(--text);
-            font-size: 15px;
-            transition: all 0.2s;
-            outline: none;
-            width: 100%;
-            font-weight: 500;
-            font-family: 'Inter', sans-serif;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.12);
-            background: var(--bg-light);
-        }
-
-        input::placeholder, textarea::placeholder { color: #4a5a70; }
-        select option { background: var(--card); color: var(--text); }
-
-        /* ===== TARIFFS ===== */
-        .tariffs-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin: 24px 0;
-        }
-
-        .tariff-card {
-            background: var(--bg);
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.25s;
-            position: relative;
-        }
-
-        .tariff-card:hover {
-            border-color: rgba(245, 158, 11, 0.5);
-            transform: translateY(-3px);
-        }
-
-        .tariff-card.selected {
-            border-color: var(--primary);
-            background: rgba(245, 158, 11, 0.08);
-            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.15);
-        }
-
-        .tariff-card .tariff-icon {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .tariff-card .tariff-name {
-            font-weight: 800;
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-
-        .tariff-card .tariff-price {
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .tariff-card .tariff-desc {
-            color: var(--text-muted);
-            font-size: 12px;
-            margin-top: 6px;
+            color: #333;
             line-height: 1.4;
         }
 
-        .tariff-card .check {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: var(--bg);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
+        .wrapper {
+            min-height: 100vh;
+            background: rgba(233, 233, 233, 0.9);
+            display: flex;
+            flex-direction: column;
         }
 
-        .tariff-card.selected .check { display: flex; }
+        a { color: #0055aa; text-decoration: none; }
+        a:hover { text-decoration: underline; }
 
-        /* ===== BUTTONS ===== */
-        .btn {
-            padding: 17px 32px;
-            border-radius: 14px;
-            border: none;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
+        /* ===== ШАПКА (БЕЗ ЛОГОТИПА) ===== */
+        header {
+            background: linear-gradient(to bottom, #ffffff 0%, #dcdcdc 100%);
+            border-bottom: 2px solid #a0a0a0;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center; /* Центрируем меню, так как логотипа нет */
             align-items: center;
-            justify-content: center;
-            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Навигация (вкладки) */
+        .nav-tabs {
+            display: flex;
+            gap: 2px;
+            background: #c0c0c0;
+            padding: 3px;
+            border: 1px solid #999;
+            border-radius: 4px;
+        }
+
+        .nav-tab {
+            background: linear-gradient(to bottom, #f0f0f0, #d0d0d0);
+            border: 1px solid #a0a0a0;
+            border-bottom: none;
+            padding: 6px 14px;
+            font-family: Tahoma, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            color: #444;
+            cursor: pointer;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .nav-tab.active {
+            background: #ffffff;
+            border-bottom: 1px solid #ffffff;
+            color: #000;
+            position: relative;
+            top: 1px;
+        }
+
+        .nav-tab:hover:not(.active) { background: #e0e0e0; }
+
+        .header-phone {
+            font-weight: bold;
+            font-size: 14px;
+            color: #1a3b5c;
+            background: #fff;
+            padding: 5px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            position: absolute;
+            right: 20px; /* Прижимаем телефон к правому краю */
+        }
+
+        /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+        main {
+            max-width: 1000px;
+            margin: 20px auto;
+            width: 100%;
+            padding: 0 15px;
+            flex: 1;
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .page-title {
+            font-size: 22px;
+            color: #1a3b5c;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
+        }
+        .page-title span { color: #d97706; }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #b0b0b0;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1a3b5c;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* ===== ФОРМЫ ===== */
+        .form-group { margin-bottom: 12px; }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #333;
+            font-size: 12px;
+        }
+
+        input[type="text"], input[type="datetime-local"], input[type="password"], textarea, select {
+            width: 100%;
+            padding: 5px 8px;
+            border: 1px solid #7f9db9;
+            border-radius: 2px;
+            font-family: Tahoma, sans-serif;
+            font-size: 13px;
+            background: #fff;
+            color: #000;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #3b6ea5;
+            outline: none;
+            background: #fffff0;
+        }
+
+        /* ===== ТАРИФЫ ===== */
+        .tariffs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .tariff-card {
+            background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+            border: 1px solid #b0b0b0;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: inset 0 1px 0 #fff, 2px 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.1s;
+        }
+
+        .tariff-card:hover {
+            border-color: #3b6ea5;
+            background: #e8f0fe;
+        }
+
+        .tariff-card.selected {
+            border: 2px solid #3b6ea5;
+            background: #dbe7f5;
+            box-shadow: inset 0 1px 0 #fff, 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tariff-name { font-weight: bold; font-size: 14px; margin-bottom: 5px; color: #1a3b5c; }
+        .tariff-price { color: #d97706; font-weight: bold; font-size: 13px; }
+        .tariff-desc { font-size: 11px; color: #666; margin-top: 5px; }
+
+        /* ===== КНОПКИ ===== */
+        .btn {
+            display: inline-block;
+            padding: 6px 16px;
+            font-family: Tahoma, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 3px;
+            cursor: pointer;
+            text-decoration: none;
+            border: 1px solid #888;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 1px 1px 2px rgba(0,0,0,0.1);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: var(--bg);
+            background: linear-gradient(to bottom, #4a90e2, #004080);
+            color: #ffffff;
+            border-color: #003366;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
             width: 100%;
-            box-shadow: 0 6px 24px rgba(245, 158, 11, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 36px rgba(245, 158, 11, 0.45);
-        }
-
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-        .btn-success { background: var(--success); color: white; padding: 13px 24px; font-size: 14px; }
-        .btn-danger { background: var(--danger); color: white; padding: 13px 24px; font-size: 14px; }
-        .btn-outline {
-            background: transparent;
-            border: 1.5px solid var(--border);
-            color: var(--text);
-            padding: 13px 24px;
-            font-size: 14px;
-        }
-        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-
-        /* ===== NOTE ===== */
-        .note {
+            padding: 8px 16px;
             font-size: 13px;
-            color: var(--text-muted);
-            margin: 20px 0;
-            padding: 14px 18px;
-            background: rgba(59, 130, 246, 0.06);
-            border-left: 3px solid var(--info);
-            border-radius: 8px;
-            line-height: 1.5;
         }
 
-        .note i { color: var(--info); margin-right: 8px; }
+        .btn-primary:hover { background: linear-gradient(to bottom, #5aa0f2, #005090); }
+        .btn-primary:active { background: linear-gradient(to bottom, #003366, #4a90e2); box-shadow: inset 0 2px 3px rgba(0,0,0,0.3); }
 
-        /* ===== ABOUT ===== */
-        .about-hero {
-            padding: 50px 0 30px;
-            text-align: center;
+        .btn-success {
+            background: linear-gradient(to bottom, #6cdb6c, #1f8b1f);
+            color: #fff;
+            border-color: #146914;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
         }
+        .btn-success:hover { background: linear-gradient(to bottom, #8ceb8c, #2f9b2f); }
 
-        .about-hero h1 {
-            font-size: 44px;
-            font-weight: 900;
-            letter-spacing: -1.5px;
-            margin-bottom: 16px;
+        .btn-danger {
+            background: linear-gradient(to bottom, #f26a6a, #a80000);
+            color: #fff;
+            border-color: #7a0000;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
         }
+        .btn-danger:hover { background: linear-gradient(to bottom, #ff8a8a, #c80000); }
 
-        .about-hero h1 span { color: var(--primary); }
-
-        .about-hero p {
-            color: var(--text-muted);
-            font-size: 17px;
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
-
-        .story-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 28px;
-        }
-
-        .story-card h2 {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .story-card h2 i { color: var(--primary); }
-
-        .story-card p {
-            color: var(--text-muted);
-            font-size: 15px;
-            line-height: 1.8;
-            margin-bottom: 16px;
-        }
-
-        .story-card p:last-child { margin-bottom: 0; }
-
-        .story-card strong { color: var(--text); }
-
-        .timeline {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-            margin-top: 8px;
-        }
-
-        .timeline-item {
-            display: flex;
-            gap: 20px;
-            padding: 20px 0;
-            position: relative;
-        }
-
-        .timeline-item:not(:last-child)::before {
-            content: '';
-            position: absolute;
-            left: 19px;
-            top: 50px;
-            bottom: -20px;
-            width: 2px;
-            background: var(--border);
-        }
-
-        .timeline-dot {
-            width: 40px;
-            height: 40px;
-            min-width: 40px;
-            border-radius: 12px;
-            background: rgba(245, 158, 11, 0.1);
-            border: 1.5px solid rgba(245, 158, 11, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-size: 16px;
-            z-index: 1;
-        }
-
-        .timeline-content h3 {
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .timeline-content p {
-            color: var(--text-muted);
-            font-size: 14px;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        /* ===== TEAM ===== */
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin-top: 24px;
-        }
-
-        .team-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 28px 24px;
-            text-align: center;
-            transition: all 0.25s;
-        }
-
-        .team-card:hover {
-            border-color: rgba(245, 158, 11, 0.4);
-            transform: translateY(-4px);
-        }
-
-        .team-avatar {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: 900;
-            color: var(--bg);
-            margin: 0 auto 16px;
-        }
-
-        .team-card h3 {
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .team-card .role {
-            color: var(--primary);
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .team-card .discord {
-            color: var(--text-muted);
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .team-card .discord i { color: #5865F2; }
-
-        /* ===== CONTACTS ===== */
-        .contacts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 24px;
-        }
-
-        .contact-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 28px;
-            display: flex;
-            gap: 18px;
-            align-items: flex-start;
-            transition: all 0.25s;
-        }
-
-        .contact-card:hover { border-color: rgba(245, 158, 11, 0.4); }
-
-        .contact-icon {
-            width: 52px;
-            height: 52px;
-            min-width: 52px;
-            border-radius: 14px;
-            background: rgba(245, 158, 11, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-size: 20px;
-        }
-
-        .contact-card h3 {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .contact-card p {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text);
-            line-height: 1.5;
-        }
-
-        /* ===== FLEET ===== */
-        .fleet-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 24px;
-        }
-
-        .fleet-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            overflow: hidden;
-            transition: all 0.25s;
-        }
-
-        .fleet-card:hover {
-            border-color: rgba(245, 158, 11, 0.4);
-            transform: translateY(-4px);
-        }
-
-        .fleet-image {
-            height: 160px;
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 64px;
-            position: relative;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .fleet-image::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 50% 100%, rgba(245, 158, 11, 0.15), transparent 70%);
-        }
-
-        .fleet-body { padding: 22px; }
-
-        .fleet-body h3 {
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .fleet-body .fleet-class {
-            color: var(--primary);
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .fleet-features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .fleet-feature {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        /* ===== JOBS ===== */
-        .jobs-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 28px;
-        }
-
-        .jobs-card h2 {
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .jobs-card .jobs-sub {
-            color: var(--text-muted);
-            font-size: 15px;
-            margin-bottom: 28px;
-        }
-
-        .jobs-columns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-        }
-
-        .jobs-column h3 {
-            font-size: 15px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--primary);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .job-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .job-list li {
-            display: flex;
-            gap: 12px;
-            color: var(--text-muted);
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .job-list li i {
-            color: var(--success);
-            font-size: 14px;
-            margin-top: 3px;
-        }
-
-        /* ===== REVIEWS ===== */
-        .reviews-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-            margin-top: 24px;
-        }
-
+        /* ===== ОТЗЫВЫ ===== */
+        .reviews-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .review-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 24px;
-            margin-bottom: 16px;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
         }
+        .review-header { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .review-author { font-weight: bold; color: #0055aa; }
+        .review-stars { color: #f59e0b; font-size: 14px; }
+        .review-text { font-size: 12px; color: #444; font-style: italic; }
+        .star-rating-input { font-size: 24px; cursor: pointer; color: #ccc; }
+        .star-rating-input .active { color: #f59e0b; }
 
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .review-author {
-            font-weight: 800;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .review-author-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: var(--bg);
-            font-weight: 900;
-        }
-
-        .review-stars {
-            color: var(--primary);
-            font-size: 14px;
-        }
-
-        .review-text {
-            color: var(--text-muted);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .review-date {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 12px;
-            opacity: 0.7;
-        }
-
-        .star-rating-input {
-            display: flex;
-            gap: 8px;
-            font-size: 24px;
-            color: var(--text-muted);
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
-        .star-rating-input i.active {
-            color: var(--primary);
-        }
-
-        .star-rating-input i:hover {
-            color: var(--primary-light);
-        }
-
-        /* ===== EMPLOYEE ===== */
-        .login-box {
-            max-width: 420px;
-            margin: 60px auto;
+        /* ===== ГЛАВНАЯ ===== */
+        .hero {
+            background: #fff;
+            border: 1px solid #b0b0b0;
+            padding: 30px;
             text-align: center;
-        }
-
-        .login-box .card { padding: 44px; }
-
-        .login-box .login-icon {
-            font-size: 56px;
             margin-bottom: 20px;
+            border-radius: 4px;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
         }
-
-        .login-box h2 {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .login-box p {
-            color: var(--text-muted);
-            margin-bottom: 28px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .login-box input {
-            margin-bottom: 18px;
-            text-align: center;
-            font-size: 16px;
-            letter-spacing: 2px;
-        }
-
-        .employee-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-            gap: 16px;
-            padding-top: 40px;
-        }
-
-        .employee-header h2 {
+        .hero h1 {
             font-size: 28px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            color: #1a3b5c;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 0 #fff;
         }
+        .hero p { font-size: 14px; color: #555; margin-bottom: 20px; }
 
-        .employee-header h2 i { color: var(--primary); }
-
-        .orders-list {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        .order-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 26px;
-            transition: all 0.2s;
-        }
-
-        .order-card:hover { border-color: #3a4a62; }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .order-id {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
-        }
-
-        .order-name {
-            font-size: 20px;
-            font-weight: 800;
-            margin-top: 4px;
-        }
-
-        .order-status {
-            padding: 7px 16px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .order-status.pending {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--primary);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        .order-status.accepted {
-            background: rgba(34, 197, 94, 0.15);
-            color: var(--success);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-
-        .order-status.rejected {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .order-status.completed {
-            background: rgba(59, 130, 246, 0.15);
-            color: var(--info);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .order-details {
+        .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
-
-        .detail-item { display: flex; flex-direction: column; gap: 4px; }
-
-        .detail-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            font-weight: 700;
+        .feature-box {
+            background: #f4f4f4;
+            border: 1px solid #d0d0d0;
+            padding: 15px;
+            border-radius: 4px;
         }
+        .feature-box h3 { font-size: 14px; color: #1a3b5c; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+        .feature-box ul { margin-left: 20px; font-size: 12px; color: #444; }
 
-        .detail-value { font-size: 15px; font-weight: 600; }
-
-        .order-actions {
-            display: flex;
-            gap: 12px;
-            padding-top: 18px;
-            border-top: 1px solid var(--border);
-            flex-wrap: wrap;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 70px 20px;
-            color: var(--text-muted);
-        }
-
-        .empty-state i { font-size: 56px; margin-bottom: 18px; opacity: 0.35; }
-        .empty-state p { font-size: 16px; }
-
-        .total-price {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 22px;
-            background: rgba(34, 197, 94, 0.08);
-            border: 1px solid rgba(34, 197, 94, 0.25);
-            border-radius: 14px;
-            margin-top: 16px;
-        }
-
-        .total-price span:first-child { color: var(--text-muted); font-size: 14px; }
-        .total-price span:last-child { color: var(--success); font-size: 24px; font-weight: 900; }
-
-        .price-input-group { display: flex; gap: 12px; align-items: center; width: 100%; }
-        .price-input-group input { flex: 1; }
-
-        .refresh-btn {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 11px 20px;
-            border-radius: 11px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .refresh-btn:hover { color: var(--text); border-color: #3a4a62; }
-
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(120px);
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 18px 30px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-weight: 600;
-            transition: all 0.45s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 1000;
-            box-shadow: 0 16px 50px rgba(0,0,0,0.5);
-            font-size: 15px;
-        }
-
-        .toast.show { transform: translateX(-50%) translateY(0); }
-        .toast.success { border-color: var(--success); }
-        .toast.success i { color: var(--success); font-size: 20px; }
-        .toast.error { border-color: var(--danger); }
-        .toast.error i { color: var(--danger); font-size: 20px; }
-
-        /* ===== FOOTER ===== */
+        /* ===== ПАНЕЛЬ СОТРУДНИКА ===== */
+        .login-box { max-width: 400px; margin: 40px auto; }
+        .employee-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .order-card { background: #fff; border: 1px solid #b0b0b0; padding: 15px; margin-bottom: 15px; border-radius: 4px; }
+        .order-header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+        .order-id { font-family: monospace; color: #666; }
+        .order-name { font-size: 16px; font-weight: bold; color: #1a3b5c; }
+        .order-status { padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .status-pending { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .status-accepted { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status-rejected { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .status-completed { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        
+        .order-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; margin-bottom: 15px; }
+        .detail-item strong { display: block; color: #666; font-size: 11px; text-transform: uppercase; }
+        .order-actions { display: flex; gap: 10px; }
+        
+        /* ===== ФУТЕР ===== */
         footer {
-            border-top: 1px solid var(--border);
-            padding: 40px 48px;
-            margin-top: 40px;
-            background: rgba(17, 24, 39, 0.8);
-            backdrop-filter: blur(10px);
+            background: #dcdcdc;
+            border-top: 2px solid #a0a0a0;
+            padding: 20px;
+            text-align: center;
+            font-size: 11px;
+            color: #555;
+            margin-top: auto;
         }
 
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 24px;
-        }
-
-        .footer-brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; }
-        .footer-brand span { color: var(--primary); }
-
-        .footer-info {
-            color: var(--text-muted);
-            font-size: 13px;
-            line-height: 1.7;
-            text-align: right;
-        }
-
-        .footer-info a { color: var(--primary); text-decoration: none; }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 900px) {
-            header { padding: 14px 20px; flex-wrap: wrap; gap: 12px; justify-content: center; }
-            .header-phone { display: none; }
-            .hero h1 { font-size: 38px; }
-            .hero-stats { gap: 28px; }
-            .form-grid { grid-template-columns: 1fr; }
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 10px; padding-top: 40px; }
+            .header-phone { position: static; margin-top: 10px; }
+            .nav-tabs { flex-wrap: wrap; justify-content: center; }
             .tariffs-grid { grid-template-columns: 1fr; }
-            .jobs-columns { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
             .reviews-grid { grid-template-columns: 1fr; }
-            .card, .story-card, .jobs-card { padding: 24px 20px; }
-            main { padding: 0 14px 40px; }
-            .nav-tab { padding: 9px 14px; font-size: 12px; }
-            .nav-tab i { display: none; }
-            .footer-content { flex-direction: column; text-align: center; }
-            .footer-info { text-align: center; }
+            .order-details { grid-template-columns: 1fr; }
             .order-actions { flex-direction: column; }
-            .btn-success, .btn-danger { width: 100%; }
-            .price-input-group { flex-direction: column; }
-            .price-input-group input { width: 100%; }
-            .about-hero h1 { font-size: 32px; }
-        }
-
-        .section-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border), transparent);
-            margin: 48px 0;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo" onclick="switchTab('order')">
-        <div class="logo-icon"><i class="fas fa-taxi"></i></div>
-        <!-- ИСПРАВЛЕНО: Убран flex и пробелы -->
-        <div style="display:inline-block;"><span>City</span><span style="color: var(--primary);">Flow</span></div>
-    </div>
-    <div class="header-nav">
-        <button class="nav-tab active" onclick="switchTab('order')">
-            <i class="fas fa-plus-circle"></i> Заказать
-        </button>
-        <button class="nav-tab" onclick="switchTab('about')">
-            <i class="fas fa-building"></i> О компании
-        </button>
-        <button class="nav-tab" onclick="switchTab('fleet')">
-            <i class="fas fa-car-side"></i> Автопарк
-        </button>
-        <button class="nav-tab" onclick="switchTab('jobs')">
-            <i class="fas fa-briefcase"></i> Вакансии
-        </button>
-        <button class="nav-tab" onclick="switchTab('reviews')">
-            <i class="fas fa-star"></i> Отзывы
-        </button>
-        <button class="nav-tab" onclick="switchTab('employee')">
-            <i class="fas fa-user-shield"></i> Сотрудник
-        </button>
-    </div>
-    <div class="header-phone">
-        <i class="fas fa-phone-alt"></i> 734-755-5700
-    </div>
-</header>
-
-<main>
-    <!-- ============ ЗАКАЗ ============ -->
-    <section id="order-section" class="section active">
-        <div class="hero">
-            <div class="hero-badge">
-                <span class="dot"></span> Таксопарк работает 24/7
-            </div>
-            <h1>Доброград — <span>CityFlow</span></h1>
-            <p>Комфортные и быстрые поездки по всему округу Уэйн. Закажите такси за минуту — наш сотрудник свяжется с вами для подтверждения.</p>
-            <div class="hero-stats">
-                <div class="hero-stat">
-                    <div class="num">3</div>
-                    <div class="label">Класса авто</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="num">24/7</div>
-                    <div class="label">Работаем</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="num">2024</div>
-                    <div class="label">Год основания</div>
-                </div>
-            </div>
+<div class="wrapper">
+    <!-- ШАПКА (БЕЗ ЛОГОТИПА) -->
+    <header>
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('home')">Главная</button>
+            <button class="nav-tab" onclick="switchTab('order')">Заказать</button>
+            <button class="nav-tab" onclick="switchTab('about')">О компании</button>
+            <button class="nav-tab" onclick="switchTab('fleet')">Автопарк</button>
+            <button class="nav-tab" onclick="switchTab('jobs')">Вакансии</button>
+            <button class="nav-tab" onclick="switchTab('reviews')">Отзывы</button>
+            <button class="nav-tab" onclick="switchTab('employee')">Сотрудник</button>
         </div>
+        <div class="header-phone">📞 734-755-5700</div>
+    </header>
 
-        <div class="card">
-            <h2 class="card-title"><i class="fas fa-clipboard-list"></i> Оформление заказа</h2>
-            <p class="card-subtitle">Заполните форму — заявка поступит нашим сотрудникам и в Discord</p>
+    <!-- КОНТЕНТ -->
+    <main>
+        <!-- ============ ГЛАВНАЯ ============ -->
+        <section id="home-section" class="section active">
+            <div class="hero">
+                <h1>Добро пожаловать в CityFlow Taxi</h1>
+                <p>Мы — надежный таксопарк в Доброграде, работающий 24 часа в сутки 7 дней в неделю. Комфорт, безопасность и доступные цены.</p>
+                <button class="btn btn-primary" style="width: 200px;" onclick="switchTab('order')">Заказать такси</button>
+            </div>
 
-            <form id="order-form">
-                <div class="form-grid">
+            <div class="features-grid">
+                <div class="feature-box">
+                    <h3>Для пассажиров</h3>
+                    <ul>
+                        <li>Быстрая подача автомобиля</li>
+                        <li>Вежливые и опытные водители</li>
+                        <li>Оплата наличными и картой</li>
+                        <li>Отслеживание поездки по GPS</li>
+                    </ul>
+                </div>
+                <div class="feature-box">
+                    <h3>Для водителей</h3>
+                    <ul>
+                        <li>Гибкий график работы</li>
+                        <li>Честные и прозрачные тарифы</li>
+                        <li>Современный автопарк</li>
+                        <li>Поддержка 24/7</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ ЗАКАЗ ============ -->
+        <section id="order-section" class="section">
+            <h2 class="page-title">Оформление <span>заказа</span></h2>
+            <div class="card">
+                <div class="card-title">Заполните форму заказа</div>
+                <form id="order-form">
                     <div class="form-group">
-                        <label><i class="fas fa-user"></i> Фамилия и Имя</label>
+                        <label>Фамилия и Имя</label>
                         <input type="text" id="clientName" placeholder="Иван Иванов" required>
                     </div>
-
                     <div class="form-group">
-                        <label><i class="fas fa-calendar"></i> Дата и время заказа</label>
+                        <label>Дата и время</label>
                         <input type="datetime-local" id="orderDate" required>
                     </div>
-
-                    <div class="form-group full">
-                        <label><i class="fas fa-car"></i> Режим такси</label>
+                    <div class="form-group">
+                        <label>Режим такси</label>
                         <div class="tariffs-grid" id="tariffs-grid">
                             <div class="tariff-card" data-mode="Комфорт" onclick="selectTariff(this)">
-                                <div class="check"><i class="fas fa-check"></i></div>
-                                <div class="tariff-icon">🚕</div>
-                                <div class="tariff-name">Комфорт</div>
+                                <div class="tariff-name">🚕 Комфорт</div>
                                 <div class="tariff-price">от 500 ₽</div>
-                                <div class="tariff-desc">Удобные седаны с кондиционером</div>
+                                <div class="tariff-desc">Удобные седаны</div>
                             </div>
                             <div class="tariff-card" data-mode="Бизнес" onclick="selectTariff(this)">
-                                <div class="check"><i class="fas fa-check"></i></div>
-                                <div class="tariff-icon">💼</div>
-                                <div class="tariff-name">Бизнес</div>
+                                <div class="tariff-name">💼 Бизнес</div>
                                 <div class="tariff-price">от 1500 ₽</div>
-                                <div class="tariff-desc">Премиальные авто, кожаный салон</div>
+                                <div class="tariff-desc">Премиум авто</div>
                             </div>
                             <div class="tariff-card" data-mode="Личный водитель" onclick="selectTariff(this)">
-                                <div class="check"><i class="fas fa-check"></i></div>
-                                <div class="tariff-icon">👔</div>
-                                <div class="tariff-name">Личный водитель</div>
+                                <div class="tariff-name">👔 Водитель</div>
                                 <div class="tariff-price">от 5000 ₽</div>
-                                <div class="tariff-desc">Персональный водитель на день</div>
+                                <div class="tariff-desc">На весь день</div>
                             </div>
                         </div>
                     </div>
-
                     <div class="form-group">
-                        <label><i class="fab fa-discord"></i> Ваш Discord для связи</label>
+                        <label>Ваш Discord</label>
                         <input type="text" id="discordTag" placeholder="steamgmod" required>
                     </div>
-
                     <div class="form-group">
-                        <label><i class="fas fa-hashtag"></i> Подпись (номерация)</label>
+                        <label>Подпись (номерация)</label>
                         <input type="text" id="signature" placeholder="Пример 5848" required>
                     </div>
-                </div>
-
-                <div class="note">
-                    <i class="fas fa-info-circle"></i>
-                    Итоговая сумма рассчитывается при окончании заказа. Оплата производится после завершения поездки.
-                </div>
-
-                <button type="submit" class="btn btn-primary" id="submitBtn">
-                    <i class="fas fa-paper-plane"></i> Оформить заказ
-                </button>
-            </form>
-        </div>
-    </section>
-
-    <!-- ============ О КОМПАНИИ ============ -->
-    <section id="about-section" class="section">
-        <div class="about-hero">
-            <h1>О компании <span>CityFlow</span></h1>
-            <p>Частная компания, основанная в 2024 году, занимающаяся перевозками пассажиров в Доброграде и округе Уэйн.</p>
-        </div>
-
-        <div class="story-card">
-            <h2><i class="fas fa-book-open"></i> Наша история</h2>
-            <p>Когда-то в Доброграде работала компания <strong>«ConVard Taxi»</strong>, обслуживающая почти весь округ Уэйн. Однако времена поменялись, и несколько лет назад она столкнулась с финансовыми трудностями. Руководство не смогло справиться с растущими издержками и долгами, в итоге заявив о банкротстве. Все её активы, включая старые автомобили и склады, были выставлены на продажу.</p>
-            <p>Именно тогда уроженец Германии <strong>Конрад Йозенхофф</strong> — трудолюбивый и упорный предприниматель — увидел возможность. Практически всю свою молодость он пытался организовать своё успешное дело. У него были взлёты и падения, он совершал ошибки, оступался, зарабатывал и терял деньги, но самое главное — получал бесценный опыт. Его коммуникабельность, дружелюбие и умение договариваться подарили ему много хороших связей и знакомых.</p>
-            <p>Собрав бо́льшую часть своих сбережений и попросив взаймы у знакомых, Конрад выкупил старый склад «ConVard Taxi» вместе с автомобилями. Машины были в плачевном состоянии — время простоя, сырой склад и отсутствие обслуживания дали о себе знать. Но Конрад видел в них потенциал.</p>
-            <p>Собрав знакомых, разбирающихся в автомобилях, он приступил к ремонту и модернизации. Часть машин ремонту не подлежала — их продали или пустили на запчасти. Установили современное оборудование, модули GPS, видеорегистраторы дороги и салона, обновили интерьеры и покрасили кузова. На вырученные деньги Конрад купил несколько новых автомобилей. Хоть их количество стало меньше, зато качество — лучше. <strong>В его голове такси означало что-то комфортное и быстрое. Название пришло само собой — «CityFlow».</strong></p>
-            <p>Изначально Конрад и его команда столкнулись с недоверием жителей — «ConVard Taxi» оставила неприятный след в памяти многих. Однако благодаря усердию, прислушиванию к жалобам и рекомендациям пассажиров, CityFlow стал постепенно завоёвывать популярность. Водители отличались вежливостью и профессионализмом, а цены остались доступными для всех слоёв населения.</p>
-        </div>
-
-        <div class="story-card">
-            <h2><i class="fas fa-route"></i> Путь компании</h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-dot"><i class="fas fa-flag"></i></div>
-                    <div class="timeline-content">
-                        <h3>Основание компании</h3>
-                        <p>Конрад Йозенхофф выкупает активы обанкротившейся «ConVard Taxi» и основывает CityFlow.</p>
+                    <div style="margin-top: 15px; font-size: 11px; color: #666;">
+                        * Итоговая сумма рассчитывается при окончании заказа.
                     </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"><i class="fas fa-wrench"></i></div>
-                    <div class="timeline-content">
-                        <h3>Восстановление автопарка</h3>
-                        <p>Ремонт и модернизация старых машин, установка GPS-модулей и видеорегистраторов, обновление интерьеров.</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"><i class="fas fa-users"></i></div>
-                    <div class="timeline-content">
-                        <h3>Набор команды</h3>
-                        <p>Привлечение профессиональных водителей, обучение и повышение квалификации за счёт компании.</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"><i class="fas fa-star"></i></div>
-                    <div class="timeline-content">
-                        <h3>Завоевание доверия</h3>
-                        <p>Благодаря вежливости водителей и доступным ценам CityFlow становится популярным таксопарком Доброграда.</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"><i class="fas fa-check-circle"></i></div>
-                    <div class="timeline-content">
-                        <h3>Официальный запуск</h3>
-                        <p>Таксопарк начал свою работу. Приём заказов и заявок на вакансии открыт.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="story-card">
-            <h2><i class="fas fa-user-tie"></i> Руководство</h2>
-            <div class="team-grid">
-                <div class="team-card">
-                    <div class="team-avatar">В</div>
-                    <h3>Вениамин Вениамин</h3>
-                    <div class="role">Директор компании</div>
-                    <div class="discord"><i class="fab fa-discord"></i> atacli</div>
-                </div>
-                <div class="team-card">
-                    <div class="team-avatar">А</div>
-                    <h3>Алексей Гунько</h3>
-                    <div class="role">Старший менеджер</div>
-                    <div class="discord"><i class="fab fa-discord"></i> steamgmod</div>
-                </div>
-            </div>
-            <div class="note" style="margin-top: 24px; margin-bottom: 0;">
-                <i class="fas fa-info-circle"></i>
-                Любые вопросы, связанные с предприятием, пишите в личные сообщения Discord — <strong>atacli</strong>, либо на форум.
-            </div>
-        </div>
-
-        <div class="story-card">
-            <h2><i class="fas fa-address-book"></i> Контакты</h2>
-            <div class="contacts-grid">
-                <div class="contact-card">
-                    <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
-                    <div>
-                        <h3>Телефон</h3>
-                        <p>734-755-5700</p>
-                    </div>
-                </div>
-                <div class="contact-card">
-                    <div class="contact-icon"><i class="fas fa-globe"></i></div>
-                    <div>
-                        <h3>Сайт</h3>
-                        <a href="https://mayordd-gmod.github.io/CityFlow/" style="color: var(--text); text-decoration: none;">www.cityflowtaxi.com</a>
-                    </div>
-                </div>
-                <div class="contact-card">
-                    <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <div>
-                        <h3>Адрес офиса</h3>
-                        <p>США, Мичиган, Доброград, ул. Бравери, 1</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============ АВТОПАРК ============ -->
-    <section id="fleet-section" class="section">
-        <div class="about-hero">
-            <h1>Наш <span>автопарк</span></h1>
-            <p>Современные автомобили в отличном состоянии. Каждая машина оборудована GPS-модулем, видеорегистраторами дороги и салона.</p>
-        </div>
-
-        <div class="fleet-grid">
-            <div class="fleet-card">
-                <div class="fleet-image">🚕</div>
-                <div class="fleet-body">
-                    <h3>Комфорт-класс</h3>
-                    <div class="fleet-class">от 500 ₽</div>
-                    <div class="fleet-features">
-                        <span class="fleet-feature">Кондиционер</span>
-                        <span class="fleet-feature">GPS</span>
-                        <span class="fleet-feature">Видеорегистратор</span>
-                        <span class="fleet-feature">4 места</span>
-                    </div>
-                </div>
-            </div>
-            <div class="fleet-card">
-                <div class="fleet-image">💼</div>
-                <div class="fleet-body">
-                    <h3>Бизнес-класс</h3>
-                    <div class="fleet-class">от 1500 ₽</div>
-                    <div class="fleet-features">
-                        <span class="fleet-feature">Кожаный салон</span>
-                        <span class="fleet-feature">Климат-контроль</span>
-                        <span class="fleet-feature">GPS</span>
-                        <span class="fleet-feature">Видеорегистратор</span>
-                    </div>
-                </div>
-            </div>
-            <div class="fleet-card">
-                <div class="fleet-image">👔</div>
-                <div class="fleet-body">
-                    <h3>Личный водитель</h3>
-                    <div class="fleet-class">от 5000 ₽</div>
-                    <div class="fleet-features">
-                        <span class="fleet-feature">Персональный водитель</span>
-                        <span class="fleet-feature">Премиум-авто</span>
-                        <span class="fleet-feature">Гибкий график</span>
-                        <span class="fleet-feature">На весь день</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="story-card" style="margin-top: 28px;">
-            <h2><i class="fas fa-shield-alt"></i> Безопасность и оборудование</h2>
-            <p>Все автомобили CityFlow проходят регулярное техническое обслуживание. В каждой машине установлены:</p>
-            <ul class="job-list" style="margin-top: 16px;">
-                <li><i class="fas fa-check-circle"></i> Модули GPS для отслеживания маршрута</li>
-                <li><i class="fas fa-check-circle"></i> Видеорегистраторы дороги и салона</li>
-                <li><i class="fas fa-check-circle"></i> Современное оборудование связи с диспетчерской</li>
-                <li><i class="fas fa-check-circle"></i> Обновлённые интерьеры и презентабельный внешний вид</li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- ============ ВАКАНСИИ ============ -->
-    <section id="jobs-section" class="section">
-        <div class="about-hero">
-            <h1>Вакансия <span>водителя</span></h1>
-            <p>Наш таксопарк активно развивается и ищет ответственных и профессиональных водителей для работы в городе.</p>
-        </div>
-
-        <div class="jobs-card">
-            <h2>Работа в такси — ваш путь к финансовой независимости!</h2>
-            <p class="jobs-sub">Если вы любите вождение, цените гибкий график и хотите получать достойный доход, то эта вакансия для вас!</p>
-
-            <div class="jobs-columns">
-                <div class="jobs-column">
-                    <h3><i class="fas fa-gift"></i> Условия</h3>
-                    <ul class="job-list">
-                        <li><i class="fas fa-check"></i> <strong>Гибкий график:</strong> вы сами выбираете удобное время для работы.</li>
-                        <li><i class="fas fa-check"></i> <strong>Конкурентоспособная оплата:</strong> заработок зависит от вашего желания и активности — чем больше заказов, тем выше доход.</li>
-                        <li><i class="fas fa-check"></i> <strong>Современный автопарк:</strong> вам будет предоставлен автомобиль в отличном состоянии.</li>
-                        <li><i class="fas fa-check"></i> <strong>Карьерный рост:</strong> успешным водителям открываются перспективы развития внутри компании, включая переход на руководящие должности.</li>
-                        <li><i class="fas fa-check"></i> <strong>Бонусы и премии:</strong> за выполнение определённых показателей и работу без нарушений — дополнительные бонусы.</li>
-                    </ul>
-                </div>
-                <div class="jobs-column">
-                    <h3><i class="fas fa-clipboard-check"></i> Требования</h3>
-                    <ul class="job-list">
-                        <li><i class="fas fa-check"></i> Опыт вождения от 3 лет.</li>
-                        <li><i class="fas fa-check"></i> Наличие водительского удостоверения категории B.</li>
-                        <li><i class="fas fa-check"></i> Хорошее знание города и умение ориентироваться в нём.</li>
-                        <li><i class="fas fa-check"></i> Ответственность и вежливость при общении с пассажирами.</li>
-                        <li><i class="fas fa-check"></i> Чистая история вождения без серьёзных нарушений ПДД.</li>
-                        <li><i class="fas fa-check"></i> Готовность соблюдать правила дорожного движения и корпоративную этику.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="section-divider" style="margin: 32px 0;"></div>
-
-            <h3 style="font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                <i class="fas fa-thumbs-up"></i> Преимущества работы с нами
-            </h3>
-            <ul class="job-list">
-                <li><i class="fas fa-check"></i> Прозрачная система начисления заработной платы.</li>
-                <li><i class="fas fa-check"></i> Обучение и повышение квалификации за счёт компании.</li>
-                <li><i class="fas fa-check"></i> Дружный коллектив и комфортная рабочая атмосфера.</li>
-            </ul>
-
-            <div class="note" style="margin-top: 28px;">
-                <i class="fas fa-info-circle"></i>
-                <strong>Как начать сотрудничество?</strong> Заполните анкету на нашем сайте или позвоните по телефону. Наши менеджеры свяжутся с вами для обсуждения всех деталей и проведения собеседования.
-            </div>
-
-            <div class="contacts-grid" style="margin-top: 24px;">
-                <div class="contact-card">
-                    <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
-                    <div>
-                        <h3>Телефон</h3>
-                        <p>734-755-5700</p>
-                    </div>
-                </div>
-                <div class="contact-card">
-                    <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <div>
-                        <h3>Офис</h3>
-                        <p>ул. Бравери, 1, Доброград</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============ ОТЗЫВЫ ============ -->
-    <section id="reviews-section" class="section">
-        <div class="about-hero">
-            <h1>Отзывы <span>пассажиров</span></h1>
-            <p>Мнения наших клиентов — главный показатель качества работы CityFlow.</p>
-        </div>
-
-        <div class="reviews-grid">
-            <!-- Форма добавления отзыва -->
-            <div class="card" style="align-self: start;">
-                <h2 class="card-title"><i class="fas fa-pen"></i> Оставить отзыв</h2>
-                <p class="card-subtitle">Поделитесь впечатлениями о поездке</p>
-                
-                <form id="review-form">
-                    <div class="form-group" style="margin-bottom: 16px;">
-                        <label><i class="fas fa-user"></i> Имя и Фамилия</label>
-                        <input type="text" id="reviewName" placeholder="Иван Иванов" required>
-                    </div>
-                    
-                    <div class="form-group" style="margin-bottom: 16px;">
-                        <label><i class="fas fa-star"></i> Оценка</label>
-                        <div class="star-rating-input" id="star-rating">
-                            <i class="fas fa-star" data-value="1"></i>
-                            <i class="fas fa-star" data-value="2"></i>
-                            <i class="fas fa-star" data-value="3"></i>
-                            <i class="fas fa-star" data-value="4"></i>
-                            <i class="fas fa-star" data-value="5"></i>
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label><i class="fas fa-comment"></i> Комментарий</label>
-                        <textarea id="reviewText" placeholder="Расскажите, как прошла поездка..." required></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-paper-plane"></i> Отправить отзыв
-                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn" style="margin-top: 15px;">Оформить заказ</button>
                 </form>
             </div>
+        </section>
 
-            <!-- Список отзывов -->
-            <div id="reviews-list">
-                <!-- Сюда будут загружаться отзывы -->
-            </div>
-        </div>
-    </section>
-
-    <!-- ============ СОТРУДНИК ============ -->
-    <section id="employee-section" class="section">
-        <div id="employee-login" class="login-box">
+        <!-- ============ О КОМПАНИИ ============ -->
+        <section id="about-section" class="section">
+            <h2 class="page-title">О компании <span>CityFlow</span></h2>
             <div class="card">
-                <div class="login-icon">🔐</div>
-                <h2>Вход для сотрудников</h2>
-                <p>Введите код доступа для управления заказами таксопарка CityFlow</p>
-                <input type="password" id="employeeCode" placeholder="Код доступа">
-                <button class="btn btn-primary" onclick="employeeLogin()">
-                    <i class="fas fa-sign-in-alt"></i> Войти
-                </button>
+                <div class="card-title">Наша история</div>
+                <p style="margin-bottom: 10px;">Когда-то в Доброграде работала компания «ConVard Taxi». Однако времена поменялись, и она столкнулась с финансовыми трудностями. Руководство не смогло справиться с долгами, в итоге заявив о банкротстве.</p>
+                <p style="margin-bottom: 10px;">Именно тогда уроженец Германии <strong>Конрад Йозенхофф</strong> увидел возможность. Собрав сбережения, он выкупил старый склад и автомобили. Машины были в плачевном состоянии, но Конрад видел в них потенциал.</p>
+                <p style="margin-bottom: 10px;">Собрав команду, он приступил к ремонту. Установили GPS, видеорегистраторы, обновили интерьеры. На вырученные деньги купили новые авто. <strong>В его голове такси означало что-то комфортное и быстрое. Название пришло само собой — «CityFlow».</strong></p>
+                <p>Изначально люди не доверяли новой компании, но благодаря вежливости водителей и доступным ценам, CityFlow стал популярным таксопарком Доброграда.</p>
             </div>
-        </div>
 
-        <div id="employee-panel" style="display: none;">
-            <div class="employee-header">
-                <h2><i class="fas fa-user-shield"></i> Панель диспетчера</h2>
-                <div style="display: flex; gap: 12px; align-items: center;">
-                    <button class="refresh-btn" onclick="renderOrders()">
-                        <i class="fas fa-sync-alt"></i> Обновить
-                    </button>
-                    <button class="refresh-btn" onclick="employeeLogout()">
-                        <i class="fas fa-sign-out-alt"></i> Выйти
-                    </button>
+            <div class="card">
+                <div class="card-title">Руководство</div>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <div style="background: #f4f4f4; padding: 15px; border: 1px solid #ddd; flex: 1; min-width: 200px;">
+                        <div style="font-weight: bold; color: #1a3b5c;">Вениамин Вениамин</div>
+                        <div style="color: #d97706; font-size: 11px; margin-bottom: 5px;">Директор компании</div>
+                        <div style="font-size: 12px;">Discord: atacli</div>
+                    </div>
+                    <div style="background: #f4f4f4; padding: 15px; border: 1px solid #ddd; flex: 1; min-width: 200px;">
+                        <div style="font-weight: bold; color: #1a3b5c;">Алексей Гунько</div>
+                        <div style="color: #d97706; font-size: 11px; margin-bottom: 5px;">Старший менеджер</div>
+                        <div style="font-size: 12px;">Discord: steamgmod</div>
+                    </div>
                 </div>
             </div>
-            <div class="orders-list" id="orders-list"></div>
-        </div>
-    </section>
-</main>
 
-<footer>
-    <div class="footer-content">
-        <div class="footer-brand">
-            <div class="logo-icon" style="width: 36px; height: 36px; font-size: 16px;"><i class="fas fa-taxi"></i></div>
-            City<span>Flow</span> Taxi
-        </div>
-        <div class="footer-info">
-            США, Мичиган, Доброград, ул. Бравери, 1<br>
-            Телефон: <a href="tel:7347555700">734-755-5700</a> · Сайт: <a href="https://mayordd-gmod.github.io/CityFlow/">www.cityflowtaxi.com</a><br>
-            © 2024–2026 CityFlow Taxi. Все права защищены.
-        </div>
-    </div>
-</footer>
+            <div class="card">
+                <div class="card-title">Контакты</div>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px;">
+                    <div><strong>Телефон:</strong> 734-755-5700</div>
+                    <div><strong>Сайт:</strong> <a href="https://mayordd-gmod.github.io/CityFlow/">www.cityflowtaxi.com</a></div>
+                    <div><strong>Адрес:</strong> США, Мичиган, Доброград, ул. Бравери, 1</div>
+                </div>
+            </div>
+        </section>
 
-<div class="toast" id="toast">
-    <i class="fas fa-check-circle"></i>
-    <span id="toast-text">Заказ оформлен!</span>
+        <!-- ============ АВТОПАРК ============ -->
+        <section id="fleet-section" class="section">
+            <h2 class="page-title">Наш <span>автопарк</span></h2>
+            <div class="card">
+                <div class="card-title">Современные автомобили</div>
+                <p style="margin-bottom: 15px;">Все автомобили CityFlow проходят регулярное ТО. В каждой машине установлены GPS-модули, видеорегистраторы и современное оборудование связи.</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                    <div style="text-align: center; padding: 10px; border: 1px solid #ddd; background: #fafafa;">
+                        <div style="font-size: 30px;">🚕</div>
+                        <div style="font-weight: bold;">Комфорт</div>
+                        <div style="font-size: 11px; color: #666;">Кондиционер, 4 места</div>
+                    </div>
+                    <div style="text-align: center; padding: 10px; border: 1px solid #ddd; background: #fafafa;">
+                        <div style="font-size: 30px;">💼</div>
+                        <div style="font-weight: bold;">Бизнес</div>
+                        <div style="font-size: 11px; color: #666;">Кожаный салон, климат</div>
+                    </div>
+                    <div style="text-align: center; padding: 10px; border: 1px solid #ddd; background: #fafafa;">
+                        <div style="font-size: 30px;">👔</div>
+                        <div style="font-weight: bold;">Водитель</div>
+                        <div style="font-size: 11px; color: #666;">Персональный, на день</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ ВАКАНСИИ ============ -->
+        <section id="jobs-section" class="section">
+            <h2 class="page-title">Вакансия <span>водителя</span></h2>
+            <div class="card">
+                <div class="card-title">Работа в такси — ваш путь к финансовой независимости!</div>
+                <p style="margin-bottom: 15px;">Наш таксопарк активно развивается и ищет ответственных водителей. Если вы любите вождение, цените гибкий график и хотите получать достойный доход, эта вакансия для вас!</p>
+                
+                <h3 style="font-size: 14px; margin-bottom: 10px; color: #1a3b5c;">Условия:</h3>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Гибкий график</li>
+                    <li>Конкурентоспособная оплата</li>
+                    <li>Современный автопарк</li>
+                    <li>Карьерный рост</li>
+                    <li>Бонусы и премии</li>
+                </ul>
+
+                <h3 style="font-size: 14px; margin-bottom: 10px; color: #1a3b5c;">Требования:</h3>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Опыт вождения от 3 лет</li>
+                    <li>Права категории B</li>
+                    <li>Знание города</li>
+                    <li>Вежливость и ответственность</li>
+                </ul>
+
+                <div style="margin-top: 20px; padding: 10px; background: #f9f9f9; border: 1px dashed #ccc; font-size: 12px;">
+                    <strong>Как начать сотрудничество?</strong> Заполните анкету на сайте или позвоните по телефону: 734-755-5700.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ ОТЗЫВЫ ============ -->
+        <section id="reviews-section" class="section">
+            <h2 class="page-title">Отзывы <span>пассажиров</span></h2>
+            <div class="reviews-grid">
+                <div class="card">
+                    <div class="card-title">Оставить отзыв</div>
+                    <form id="review-form">
+                        <div class="form-group">
+                            <label>Имя и Фамилия</label>
+                            <input type="text" id="reviewName" placeholder="Иван Иванов" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Оценка</label>
+                            <div class="star-rating-input" id="star-rating">
+                                <span data-value="1">★</span>
+                                <span data-value="2">★</span>
+                                <span data-value="3">★</span>
+                                <span data-value="4">★</span>
+                                <span data-value="5">★</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Комментарий</label>
+                            <textarea id="reviewText" placeholder="Расскажите о поездке..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+                    </form>
+                </div>
+                <div id="reviews-list">
+                    <!-- Отзывы будут здесь -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ СОТРУДНИК ============ -->
+        <section id="employee-section" class="section">
+            <div id="employee-login" class="login-box">
+                <div class="card">
+                    <div class="card-title" style="text-align: center;">Вход для сотрудников</div>
+                    <div class="form-group">
+                        <label>Код доступа</label>
+                        <input type="password" id="employeeCode" placeholder="******">
+                    </div>
+                    <button class="btn btn-primary" onclick="employeeLogin()">Войти в панель</button>
+                </div>
+            </div>
+
+            <div id="employee-panel" style="display: none;">
+                <div class="employee-header">
+                    <h2 class="page-title" style="border:none; margin:0;">Панель диспетчера</h2>
+                    <div>
+                        <button class="btn btn-primary" style="width:auto; padding:5px 10px; font-size:11px;" onclick="renderOrders()">Обновить</button>
+                        <button class="btn btn-primary" style="width:auto; padding:5px 10px; font-size:11px; background:#aaa; border-color:#888;" onclick="employeeLogout()">Выйти</button>
+                    </div>
+                </div>
+                <div id="orders-list"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ФУТЕР -->
+    <footer>
+        <div>© 2024–2026 CityFlow Taxi. Все права защищены.</div>
+        <div>Телефон: <a href="tel:7347555700">734-755-5700</a> | Сайт: <a href="https://mayordd-gmod.github.io/CityFlow/">www.cityflowtaxi.com</a></div>
+        <div>США, Мичиган, Доброград, ул. Бравери, 1</div>
+    </footer>
 </div>
 
 <script>
     // ============ КОНФИГ ============
     const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1571910798241177662/kpSOLD2MkU415O4W5pQhL-6IkGt8KmTMMF-jxs0Lf2rQ0JhXMtRp6nNvTSGVCjRniwpn';
     const EMPLOYEE_CODE = 'cityflow2026'; 
-    const ORDERS_STORAGE_KEY = 'cityflow_orders_local';
-    const REVIEWS_STORAGE_KEY = 'cityflow_reviews_local';
-    const SESSION_KEY = 'cityflow_employee_session_v4';
+    const ORDERS_STORAGE_KEY = 'cityflow_orders_2007';
+    const REVIEWS_STORAGE_KEY = 'cityflow_reviews_2007';
+    const SESSION_KEY = 'cityflow_employee_session_2007';
 
     let orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
     let reviews = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]');
@@ -1649,13 +604,9 @@
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
 
-        const btn = event ? event.target.closest('.nav-tab') : null;
-        if (btn) btn.classList.add('active');
-        else {
-            const tabs = document.querySelectorAll('.nav-tab');
-            const idx = { order: 0, about: 1, fleet: 2, jobs: 3, reviews: 4, employee: 5 };
-            if (tabs[idx[tab]]) tabs[idx[tab]].classList.add('active');
-        }
+        const tabs = document.querySelectorAll('.nav-tab');
+        const idx = { home: 0, order: 1, about: 2, fleet: 3, jobs: 4, reviews: 5, employee: 6 };
+        if (tabs[idx[tab]]) tabs[idx[tab]].classList.add('active');
 
         document.getElementById(tab + '-section').classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1664,18 +615,9 @@
         if (tab === 'reviews') renderReviews();
     }
 
-    // ============ ТОСТ ============
-    function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        const text = document.getElementById('toast-text');
-        const icon = toast.querySelector('i');
-
-        toast.className = 'toast ' + type;
-        text.textContent = message;
-        icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3500);
+    // ============ АЛЕРТЫ ============
+    function showAlert(message, isError = false) {
+        alert((isError ? "ОШИБКА: " : "УСПЕХ: ") + message);
     }
 
     // ============ ТАРИФЫ ============
@@ -1686,7 +628,7 @@
     }
 
     // ============ ЗВЕЗДЫ ДЛЯ ОТЗЫВОВ ============
-    const stars = document.querySelectorAll('#star-rating i');
+    const stars = document.querySelectorAll('#star-rating span');
     stars.forEach(star => {
         star.addEventListener('click', () => {
             selectedRating = parseInt(star.dataset.value);
@@ -1711,381 +653,20 @@
         const signature = document.getElementById('signature').value.trim();
 
         if (!name || !date || !selectedMode || !discord || !signature) {
-            showToast('Заполните все поля и выберите тариф!', 'error');
+            showAlert('Заполните все поля и выберите тариф!', true);
             return;
         }
 
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+        btn.value = 'Отправка...';
 
         const order = {
             id: 'CF-' + Date.now().toString(36).toUpperCase(),
-            name,
-            date,
-            mode: selectedMode,
-            discord,
-            signature,
+            name, date, mode: selectedMode, discord, signature,
             status: 'pending',
             createdAt: new Date().toISOString(),
             total: null
         };
 
-        // Сохраняем локально
         orders.push(order);
-        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
-
-        // Отправляем в Discord
-        const prices = { 'Комфорт': 'от 500 ₽', 'Бизнес': 'от 1500 ₽', 'Личный водитель': 'от 5000 ₽' };
-        const icons = { 'Комфорт': '🚕', 'Бизнес': '💼', 'Личный водитель': '👔' };
-
-        const embed = {
-            title: '🚕 Новый заказ такси CityFlow',
-            description: '**Поступила новая заявка от клиента**',
-            color: 0xf59e0b,
-            fields: [
-                { name: '🆔 ID заказа', value: `\`${order.id}\``, inline: true },
-                { name: '👤 Фамилия и Имя', value: name, inline: true },
-                { name: '📅 Время заказа', value: date.replace('T', ' в '), inline: true },
-                { name: `${icons[selectedMode]} Режим такси`, value: selectedMode, inline: true },
-                { name: '💰 Тариф', value: prices[selectedMode], inline: true },
-                { name: '💬 Discord', value: discord, inline: true },
-                { name: '🔢 Подпись', value: signature, inline: true },
-                { name: '📊 Статус', value: '⏳ Ожидает подтверждения диспетчером', inline: false }
-            ],
-            footer: { text: 'CityFlow Taxi — Доброград · ул. Бравери, 1 · 734-755-5700' },
-            timestamp: new Date().toISOString()
-        };
-
-        try {
-            await fetch(DISCORD_WEBHOOK, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: 'CityFlow Taxi — Заказы',
-                    avatar_url: 'https://cdn-icons-png.flaticon.com/512/1995/1995574.png',
-                    content: '**📋 Новый заказ такси!**\nСотрудники — проверьте панель управления.',
-                    embeds: [embed]
-                })
-            });
-        } catch (err) {
-            console.error('Webhook error:', err);
-        }
-
-        showToast('Заказ оформлен! Ожидайте подтверждения.', 'success');
-        e.target.reset();
-        document.querySelectorAll('.tariff-card').forEach(c => c.classList.remove('selected'));
-        selectedMode = '';
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Оформить заказ';
-    });
-
-    // ============ ОТЗЫВЫ ============
-    document.getElementById('review-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const btn = e.target.querySelector('button[type="submit"]');
-        const name = document.getElementById('reviewName').value.trim();
-        const text = document.getElementById('reviewText').value.trim();
-
-        if (!name || !text || selectedRating === 0) {
-            showToast('Заполните все поля и поставьте оценку!', 'error');
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
-
-        const review = {
-            id: 'RV-' + Date.now().toString(36).toUpperCase(),
-            name,
-            rating: selectedRating,
-            text,
-            createdAt: new Date().toISOString()
-        };
-
-        // Сохраняем локально
-        reviews.unshift(review); // Новые сверху
-        localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(reviews));
-
-        // Отправляем в Discord
-        const embed = {
-            title: '⭐ Новый отзыв CityFlow',
-            description: `**Оценка:** ${'⭐'.repeat(selectedRating)} (${selectedRating}/5)`,
-            color: 0xf59e0b,
-            fields: [
-                { name: '👤 Автор', value: name, inline: true },
-                { name: '💬 Комментарий', value: text, inline: false }
-            ],
-            footer: { text: 'CityFlow Taxi — Отзывы' },
-            timestamp: new Date().toISOString()
-        };
-
-        try {
-            await fetch(DISCORD_WEBHOOK, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: 'CityFlow Taxi — Отзывы',
-                    embeds: [embed]
-                })
-            });
-        } catch (err) {
-            console.error('Webhook error:', err);
-        }
-
-        showToast('Спасибо за ваш отзыв!', 'success');
-        e.target.reset();
-        selectedRating = 0;
-        stars.forEach(s => s.classList.remove('active'));
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Отправить отзыв';
-        
-        renderReviews();
-    });
-
-    function renderReviews() {
-        reviews = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]');
-        const list = document.getElementById('reviews-list');
-
-        if (reviews.length === 0) {
-            list.innerHTML = `
-                <div class="card empty-state">
-                    <i class="fas fa-comments"></i>
-                    <p>Отзывов пока нет. Будьте первым!</p>
-                </div>
-            `;
-            return;
-        }
-
-        list.innerHTML = reviews.map(review => {
-            const starsHtml = Array(5).fill(0).map((_, i) => 
-                `<i class="fas fa-star" style="color: ${i < review.rating ? 'var(--primary)' : 'var(--border)'}"></i>`
-            ).join('');
-
-            const dateObj = new Date(review.createdAt);
-            const dateStr = dateObj.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-
-            return `
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="review-author">
-                            <div class="review-author-avatar">${review.name.charAt(0).toUpperCase()}</div>
-                            ${review.name}
-                        </div>
-                        <div class="review-stars">${starsHtml}</div>
-                    </div>
-                    <div class="review-text">${review.text}</div>
-                    <div class="review-date">${dateStr}</div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    // ============ СОТРУДНИК ============
-    function checkEmployeeSession() {
-        const session = localStorage.getItem(SESSION_KEY);
-        if (session === 'true') {
-            document.getElementById('employee-login').style.display = 'none';
-            document.getElementById('employee-panel').style.display = 'block';
-            renderOrders();
-        } else {
-            document.getElementById('employee-login').style.display = 'block';
-            document.getElementById('employee-panel').style.display = 'none';
-        }
-    }
-
-    function employeeLogin() {
-        const code = document.getElementById('employeeCode').value;
-        if (code === EMPLOYEE_CODE) {
-            localStorage.setItem(SESSION_KEY, 'true');
-            checkEmployeeSession();
-            showToast('Добро пожаловать в панель диспетчера!', 'success');
-        } else {
-            showToast('Неверный код доступа!', 'error');
-        }
-    }
-
-    function employeeLogout() {
-        localStorage.removeItem(SESSION_KEY);
-        checkEmployeeSession();
-        document.getElementById('employeeCode').value = '';
-    }
-
-    function renderOrders() {
-        orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
-        const list = document.getElementById('orders-list');
-
-        if (orders.length === 0) {
-            list.innerHTML = `
-                <div class="card empty-state">
-                    <i class="fas fa-inbox"></i>
-                    <p>Заказов пока нет</p>
-                </div>
-            `;
-            return;
-        }
-
-        const sorted = [...orders].reverse();
-
-        list.innerHTML = sorted.map(order => {
-            const statusLabels = {
-                pending: '⏳ Ожидает',
-                accepted: '✅ Принят',
-                rejected: '❌ Отклонён',
-                completed: '🏁 Завершён'
-            };
-
-            const prices = { 'Комфорт': 500, 'Бизнес': 1500, 'Личный водитель': 5000 };
-            const basePrice = prices[order.mode] || 500;
-
-            let actions = '';
-            if (order.status === 'pending') {
-                actions = `
-                    <button class="btn btn-success" onclick="acceptOrder('${order.id}')">
-                        <i class="fas fa-check"></i> Принять
-                    </button>
-                    <button class="btn btn-danger" onclick="rejectOrder('${order.id}')">
-                        <i class="fas fa-times"></i> Отклонить
-                    </button>
-                `;
-            } else if (order.status === 'accepted') {
-                actions = `
-                    <div class="price-input-group">
-                        <input type="number" id="price-${order.id}" placeholder="Итоговая сумма ₽" value="${order.total || basePrice}" min="0">
-                        <button class="btn btn-success" onclick="completeOrder('${order.id}')">
-                            <i class="fas fa-flag-checkered"></i> Завершить
-                        </button>
-                    </div>
-                `;
-            }
-
-            return `
-                <div class="order-card">
-                    <div class="order-header">
-                        <div>
-                            <div class="order-id">${order.id}</div>
-                            <div class="order-name">${order.name}</div>
-                        </div>
-                        <span class="order-status ${order.status}">${statusLabels[order.status]}</span>
-                    </div>
-                    <div class="order-details">
-                        <div class="detail-item">
-                            <span class="detail-label">Дата и время</span>
-                            <span class="detail-value">${order.date.replace('T', ' в ')}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Режим такси</span>
-                            <span class="detail-value">${order.mode}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Discord</span>
-                            <span class="detail-value">${order.discord}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Подпись</span>
-                            <span class="detail-value">${order.signature}</span>
-                        </div>
-                    </div>
-                    ${order.total ? `
-                        <div class="total-price">
-                            <span>Итоговая сумма:</span>
-                            <span>${order.total} ₽</span>
-                        </div>
-                    ` : ''}
-                    <div class="order-actions">
-                        ${actions || '<span style="color: var(--text-muted); font-size: 14px;"><i class="fas fa-check-double"></i> Заказ завершён</span>'}
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    async function acceptOrder(id) {
-        const order = orders.find(o => o.id === id);
-        if (!order) return;
-        order.status = 'accepted';
-        saveOrders();
-        await sendStatusUpdate(order, '✅ Заказ принят диспетчером', 0x22c55e);
-        showToast('Заказ принят!', 'success');
-        renderOrders();
-    }
-
-    async function rejectOrder(id) {
-        const order = orders.find(o => o.id === id);
-        if (!order) return;
-        order.status = 'rejected';
-        saveOrders();
-        await sendStatusUpdate(order, '❌ Заказ отклонён диспетчером', 0xef4444);
-        showToast('Заказ отклонён', 'error');
-        renderOrders();
-    }
-
-    async function completeOrder(id) {
-        const order = orders.find(o => o.id === id);
-        if (!order) return;
-
-        const priceInput = document.getElementById('price-' + id);
-        const total = parseInt(priceInput.value);
-
-        if (!total || total <= 0) {
-            showToast('Введите корректную сумму!', 'error');
-            return;
-        }
-
-        order.status = 'completed';
-        order.total = total;
-        order.completedAt = new Date().toISOString();
-        saveOrders();
-
-        await sendStatusUpdate(order, '🏁 Заказ завершён', 0x3b82f6);
-        showToast(`Заказ завершён на сумму ${total} ₽`, 'success');
-        renderOrders();
-    }
-
-    function saveOrders() {
-        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
-    }
-
-    async function sendStatusUpdate(order, title, color) {
-        const embed = {
-            title: title,
-            color: color,
-            fields: [
-                { name: '🆔 ID заказа', value: `\`${order.id}\``, inline: true },
-                { name: '👤 Клиент', value: order.name, inline: true },
-                { name: '🚗 Режим', value: order.mode, inline: true },
-                { name: '💬 Discord', value: order.discord, inline: true }
-            ],
-            footer: { text: 'CityFlow Taxi — Доброград' },
-            timestamp: new Date().toISOString()
-        };
-
-        if (order.total) {
-            embed.fields.push({ name: '💰 Итоговая сумма', value: `${order.total} ₽`, inline: false });
-        }
-
-        try {
-            await fetch(DISCORD_WEBHOOK, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: 'CityFlow Taxi — Диспетчерская',
-                    embeds: [embed]
-                })
-            });
-        } catch (err) {
-            console.error('Webhook error:', err);
-        }
-    }
-
-    // ============ ИНИЦИАЛИЗАЦИЯ ============
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    document.getElementById('orderDate').value = now.toISOString().slice(0, 16);
-
-    checkEmployeeSession();
-    renderReviews();
-</script>
-
-</body>
-</html>
+        localStorage.setItem(ORDERS
